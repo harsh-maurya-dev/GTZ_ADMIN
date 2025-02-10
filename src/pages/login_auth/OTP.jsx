@@ -1,0 +1,218 @@
+import React, { useEffect, useRef, useState } from "react";
+import otp_img from "../../assets/img/login3-bg.png";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+function OTP() {
+    const navigate = useNavigate()
+    const [digits, setDigits] = useState({
+        num1: "",
+        num2: "",
+        num3: "",
+        num4: "",
+        num5: "",
+        num6: "",
+    });
+    const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)]; // Refs for each input
+    const timerRef = useRef(null)
+    const [expiryTimer, setExpiryTimer] = useState(null)
+
+    const handleChange = (e, index) => {
+        const { name, value } = e.target;
+
+        // Update the state with the new digit
+        setDigits((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+        if (value && index < 5) {
+            inputRefs[index + 1].current.focus();
+        }
+        if (!value && index > 0) {
+            inputRefs[index - 1].current.focus();
+        }
+    };
+    // console.log(digits);
+
+    const verifyOtp = async (e) => {
+        e.preventDefault();
+        const otp = Object.values(digits).join('');
+        const userType = "Admin"
+        const stored_otp = sessionStorage.getItem("otp");
+        const email = sessionStorage.getItem("email");
+
+        const formData = { email, otp, userType }
+
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/verifyOTP`, formData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.data.error === false) {
+                if (Number(stored_otp) === response.data.results.user?.otp) {
+                    console.log("verify sent:", response.data);
+                    navigate("/reset_password");
+                    toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                }
+
+            } else {
+                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                // console.log(response);
+
+            }
+        } catch (error) {
+            console.error("otp Error:", error.response?.data || error.message);
+            toast.error("otp failed: " + (error.response?.data?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
+        }
+    };
+
+    function startTimer() {
+        const expiryTime = sessionStorage.getItem("otp_expiry");
+      
+        if (!expiryTime) {
+          console.error("Expiry time not found in sessionStorage");
+          return;
+        }
+      
+        const expiryDate = new Date(expiryTime); // Convert expiry time to Date object
+        const timerInterval = setInterval(() => {
+          const now = new Date(); // Current time
+          const timeLeft = Math.floor((expiryDate - now) / 1000); // Remaining time in seconds
+      
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            console.log("OTP has expired");
+            document.getElementById("otp-timer").innerText = "OTP has expired";
+          } else {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("otp-timer").innerText = `Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+          }
+        }, 1000); // Update every second
+      }
+
+      const resendOtp = async (e) => {
+        e.preventDefault();
+
+        try {
+            const email = sessionStorage.getItem("email")
+            const userType = "Admin"
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/forgotPassword`, {email, userType}, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.data.error === false) {
+                console.log("email sent:", response.data);
+                sessionStorage.removeItem("otp_expiry")
+                sessionStorage.setItem("otp", response.data.results?.otp)
+                sessionStorage.setItem("email", response.data.results.user?.email)
+                sessionStorage.setItem("otp_expiry", response.data.results.user?.expire_time)
+                console.log("resend otp:", response.data.results?.otp);
+                toast.success(`Resend Otp`, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+            } else {
+                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                console.log(response);
+
+            }
+        } catch (error) {
+            console.error("Failed to resend:", error.response?.data || error.message);
+        }
+    };
+      
+      // Call this function when the page loads or after fetching the OTP
+      useEffect(()=>{
+          startTimer();
+
+      },[resendOtp])
+
+
+    return (
+        <>
+            <div className="container-fluid comman-px">
+                <div className="row mt-4">
+                    <div className="col-md-8 col-11 mx-auto">
+                        <div className="w-100 h-100 bg-white rounded-4 p-4 login-wrapper">
+                            <div className="row">
+                                <div className="col-6">
+                                    <h1 className="login-heading">Forex Trading Backoffice</h1>
+                                    <div className="login-img">
+                                        <img src={otp_img} alt="" />
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <h1 className="login-text mt-5 text-center">Admin Login.</h1>
+                                    <h1 className="fs-6 text-white mt-3 text-center">
+                                        Welcome to Forex Trading Backoffice
+                                    </h1>
+                                    <div className="d-flex gap-2 bg-light py-3 px-3 rounded-3">
+                                        <span className="circle-info">
+                                            <i className="fa fa-info-circle text-main"></i>
+                                        </span>
+                                        <div>
+                                            <p className="m-0 comman-sm-text">
+                                                Please enter the OTP received on your Email Address
+                                            </p>
+                                            <p className="m-0 comman-sm-text">
+                                                OTP: <b>0-0-0-0</b>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="form-design mt-4">
+                                        <div className="form-group">
+                                            <label className="form-label text-white" htmlFor="">
+                                                OTP*
+                                            </label>
+                                            <div className="row">
+                                                {[0, 1, 2, 3, 4, 5].map((index) => (
+                                                    <div className="col-2 pe-0" key={index}>
+                                                        <input
+                                                            type="number"
+                                                            name={`num${index + 1}`}
+                                                            value={digits[`num${index + 1}`]}
+                                                            className="form-control fw-bold fs-4 p-2 text-center"
+                                                            onChange={(e) => handleChange(e, index)}
+                                                            maxLength="1"
+                                                            ref={inputRefs[index]} // Attach ref to each input
+                                                            min={1}
+                                                            max={1}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="form-group pt-3 pb-4">
+                                            <span className="text-white" >
+                                                Didn't receive the OTP?
+                                            </span>
+                                            {/* <p className="text-white" ref={timerRef}>{expiryTimer > 0 ? formatTime(expiryTimer) : "Time Expired"}</p> */}
+                                            <div className="text-white" id="otp-timer">Time left: 05:00</div>
+                                            <button
+                                                type="button"
+                                                className="text-decoration-underline text-white bg-transparent ps-1"
+                                                onClick={resendOtp}
+                                            >
+                                                Resend OTP
+                                            </button>
+                                        </div>
+                                        <div className="form-group">
+                                            <button type="button" className="comman-btn w-100" onClick={verifyOtp}>
+                                                Next
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export default OTP;

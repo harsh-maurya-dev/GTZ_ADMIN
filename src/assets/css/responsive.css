@@ -1,0 +1,97 @@
+@media (max-width:1200px) {
+    .sidebar {
+        .logo-wrapper {
+            & .logo-text {
+                font-size: 1rem;
+            }
+        }
+
+        & .sidebar-content {
+            & a {
+                white-space: nowrap;
+                & span:first-child {
+                    & i {
+                        font-size: .75rem;
+                    }
+                }
+
+                & span:last-child {
+                    font-size: .75rem;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    width: 95%;
+                }
+            }
+        }
+    }
+    .welcome-text {
+        & h2 {
+            font-size: 1rem;
+        }
+        & p {
+            font-size: .75rem;
+        }
+    }
+    .welcome-img {
+        width: 139px;
+        height: 199px;
+    }
+    .welcome-card {
+        height: 99px;
+    }
+    .dash-card {
+        padding: .1rem .75rem !important;
+        & i {
+            font-size: 1.25rem;
+            margin-top: .75rem;
+            margin-bottom: .75rem;
+        }
+        & h5{
+            font-size: .75rem;
+        }
+        & p{
+            margin-bottom: 5px;
+        }
+        &::after {
+            width: 45px;
+            height: 65px;
+        }
+        & .text-sm {
+            font-size: 8px !important;
+        }
+    }
+    & .comman-heading{
+        font-size: 1rem;
+    }
+    .table{
+        & thead{
+            & tr{
+                & th{
+                    font-size: 10px !important;
+                }
+            }
+        }
+        & tbody{
+            & tr{
+                & td{
+                    font-size: 12px !important;
+                }
+            }
+        }
+    }
+    .table-img {
+        width: 30px;
+        height: 30px;
+    }
+    .comman-btn {
+        font-size: 12px;
+        padding: .8rem 1.25rem;
+    }
+}
+
+@media (max-width:1023px) {}
+
+@media (max-width:900px) {}
+
+@media (max-width:767px) {}
