@@ -1,18 +1,37 @@
-import axios from 'axios'
-import React, { useState } from 'react'
-import { toast } from 'react-toastify'
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { useForm } from "react-hook-form";
 
 function CustomerAdd() {
-    const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "", phone_number: "", country_code: "", country: "", address: "", city: "", state: "", pin_code: "" })
+    // const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    // const onSubmit = data => console.log(data);
+    const [formData, setFormData] = useState({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone_number: "",
+        country_code: "",
+        country: "",
+        address: "",
+        city: "",
+        state: "",
+        pin_code: "",
+    });
+    const [countries, setCountries] = useState([]);
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const createCustomer = async () => {
+    const createCustomer = async (e) => {
+        e.preventDefault()
         const token = localStorage.getItem("token");
         if (!token) {
             toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
@@ -48,6 +67,111 @@ function CustomerAdd() {
         }
     };
 
+    const fetchCountries = async () => {
+        setLoading(true); // Start loading
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_LOCATION_API_URL}/countries`
+            );
+            setCountries(response.data.data);
+            // console.log(response.data.data);
+        } catch (error) {
+            console.error("Error fetching countries:", error);
+            toast.error("Failed to fetch countries. Please try again later.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
+        } finally {
+            setLoading(false); // Stop loading
+        }
+    };
+
+    const handleCountryChange = async (event) => {
+        const selectedCountry = event.target.value;
+        setFormData((prev) => ({ ...prev, country: selectedCountry }));
+
+        try {
+            const formData = new URLSearchParams();
+            formData.append("country", selectedCountry);
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_LOCATION_API_URL}/countries/states`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                }
+            );
+            if (response.data && response.data.data) {
+                setStates(response.data.data.states); // Update states list
+            } else {
+                setStates([]); // Reset states if no data found
+            }
+
+            console.log(response.data.data.states); // Handle the response data
+        } catch (error) {
+            console.error("Error fetching states:", error);
+        }
+    };
+
+    const handleStateChange = async (event) => {
+        const selectedState = event.target.value;
+        setFormData((prev) => ({ ...prev, state: selectedState }));
+        const selectedCountry = formData.country;
+
+        try {
+            const formData = new URLSearchParams();
+            formData.append("country", selectedCountry);
+            formData.append("state", selectedState);
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_LOCATION_API_URL}/countries/state/cities`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                }
+            );
+
+            if (response.data && response.data.data) {
+                setCities(response.data.data);
+            } else {
+                setCities([]);
+            }
+            console.log(response.data.data);
+        } catch (error) {
+            console.error("Error fetching cities:", error);
+            setCities([]);
+        }
+    };
+
+    const handleCityChange = async (event) => {
+        const selectedCity = event.target.value;
+        setFormData((prev) => ({ ...prev, city: selectedCity }));
+    };
+
+
+    const handlePhoneChange = (value, countryData) => {
+        const countryCode = `+${countryData.dialCode}`;
+        let cleanedValue = value.replace(/\D/g, "");
+        let countryCodeOnly = countryCode.replace(/\D/g, "");
+        let phoneNumberWithoutCountry = cleanedValue.startsWith(countryCodeOnly)
+            ? cleanedValue.slice(countryCodeOnly.length)
+            : cleanedValue;
+
+        setFormData((prev) => ({
+            ...prev,
+            phone_number: phoneNumberWithoutCountry,
+            country_code: countryCode,
+        }));
+    };
+
+
+
+    useEffect(() => {
+        fetchCountries();
+    }, []);
 
     return (
         <>
@@ -57,11 +181,14 @@ function CustomerAdd() {
                         <h2 className="comman-heading">Customer Add</h2>
                     </div>
                     <div className="comman-design-body">
-                        <div className="form-design">
+                        <form className="form-design" onSubmit={handleSubmit(createCustomer)}>
                             <div className="row">
+                                {/* first name */}
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label htmlFor="first_name" className="form-label">First Name</label>
+                                        <label htmlFor="first_name" className="form-label">
+                                            First Name
+                                        </label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -72,9 +199,12 @@ function CustomerAdd() {
                                         />
                                     </div>
                                 </div>
+                                {/* last name */}
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label htmlFor="last_name" className="form-label">Last Name</label>
+                                        <label htmlFor="last_name" className="form-label">
+                                            Last Name
+                                        </label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -85,9 +215,12 @@ function CustomerAdd() {
                                         />
                                     </div>
                                 </div>
+                                {/* email */}
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label htmlFor="email" className="form-label">Email</label>
+                                        <label htmlFor="email" className="form-label">
+                                            Email
+                                        </label>
                                         <input
                                             type="email"
                                             className="form-control"
@@ -98,44 +231,135 @@ function CustomerAdd() {
                                         />
                                     </div>
                                 </div>
+                                {/* phone number */}
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label htmlFor="phone_number" className="form-label">Mobile No.</label>
-                                        {/* <input
-                                            type="text"
-                                            className="form-control"
-                                            id="phone_number"
-                                            name="phone_number"
-                                            value={formData.phone_number}
-                                            onChange={handleChange}
-                                        /> */}
+                                        <label htmlFor="phone_number" className="form-label">
+                                            Mobile No.
+                                        </label>
                                         <PhoneInput
-                                            inputStyle={{  fontWeight: "400", marginBottom: "0.25rem", margin: ".75rem 0", width:"100%", padding:"1.3rem 3rem", borderRadius:"50px" }}
-                                            country={'in'}
+                                            inputStyle={{
+                                                fontWeight: "400",
+                                                marginBottom: "0.25rem",
+                                                margin: ".75rem 0",
+                                                width: "100%",
+                                                padding: "1.3rem 3rem",
+                                                borderRadius: "50px",
+                                            }}
+                                            country={"us"}
                                             name="phone_number"
-                                            value={formData.phone_number}
-                                            onChange={(phone) => setFormData((prev) => ({ ...prev, phone_number: phone }))}
-                                            inputclassName='form-control custom-phone-input'
+                                            value={`${formData.country_code}${formData.phone_number}`}
+                                            // onChange={(phone) =>
+                                            //     setFormData((prev) => ({
+                                            //         ...prev,
+                                            //         phone_number: phone,
+                                            //     }))
+                                            // }
+                                            onChange={handlePhoneChange}
+                                            inputclassName="form-control custom-phone-input"
                                         />
                                     </div>
-
                                 </div>
+                                {/* countries */}
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label htmlFor="city" className="form-label">City</label>
-                                        <input
-                                            type="text"
+                                        <label htmlFor="country" className="form-label">
+                                            Country
+                                        </label>
+                                        <select
+                                            name="country"
+                                            value={formData.country}
+                                            onChange={handleCountryChange}
+                                            disabled={loading}
                                             className="form-control"
-                                            id="city"
+                                        >
+                                            <option value="" className="text-white form-control">
+                                                Select a Country
+                                            </option>
+                                            {loading ? (
+                                                <option disabled>Loading countries...</option>
+                                            ) : countries.length > 0 ? (
+                                                countries.map((country, index) => (
+                                                    <option
+                                                        key={index}
+                                                        value={country.country}
+                                                        className="test-white form-control"
+                                                    >
+                                                        {country.country}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option disabled>No countries available</option>
+                                            )}
+                                        </select>
+                                    </div>
+                                </div>
+                                {/* states */}
+                                <div className="col-6">
+                                    <div className="form-group">
+                                        <label htmlFor="state" className="form-label">
+                                            State
+                                        </label>
+                                        <select
+                                            name="state"
+                                            value={formData.state}
+                                            onChange={handleStateChange} // ✅ Correct placement
+                                            disabled={loading || states.length === 0}
+                                            className="form-control"
+                                        >
+                                            <option value="" className="text-white form-control">
+                                                Select a State
+                                            </option>
+                                            {loading ? (
+                                                <option disabled>Loading states...</option>
+                                            ) : states.length > 0 ? (
+                                                states.map((state, index) => (
+                                                    <option key={index} value={state.name} className="text-white form-control">
+                                                        {state.name} {/* ✅ Show state name correctly */}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option disabled>No states available</option>
+                                            )}
+                                        </select>
+                                    </div>
+                                </div>
+                                {/* cities */}
+                                <div className="col-6">
+                                    <div className="form-group">
+                                        <label htmlFor="city" className="form-label">
+                                            City
+                                        </label>
+                                        <select
                                             name="city"
                                             value={formData.city}
-                                            onChange={handleChange}
-                                        />
+                                            onChange={handleCityChange} // ✅ Correct placement
+                                            disabled={loading || cities.length === 0}
+                                            className="form-control"
+                                        >
+                                            <option value="" className="text-white form-control">
+                                                Select a City
+                                            </option>
+                                            {loading ? (
+                                                <option disabled>Loading cities...</option>
+                                            ) : cities.length > 0 ? (
+                                                cities.map((city, index) => (
+                                                    <option key={index} value={city} className="text-white form-control">
+                                                        {city} {/* ✅ Show state name correctly */}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option disabled>No cities available</option>
+                                            )}
+                                        </select>
                                     </div>
                                 </div>
+                                {/* pin code */}
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label htmlFor="pin_code" className="form-label">Pin Code</label>
+                                        <label htmlFor="pin_code" className="form-label">
+                                            Pin Code
+                                        </label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -146,35 +370,12 @@ function CustomerAdd() {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-6">
-                                    <div className="form-group">
-                                        <label htmlFor="state" className="form-label">State</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="state"
-                                            name="state"
-                                            value={formData.state}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-6">
-                                    <div className="form-group">
-                                        <label htmlFor="country" className="form-label">Country</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="country"
-                                            name="country"
-                                            value={formData.country}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </div>
+                                {/* address */}
                                 <div className="col-12">
                                     <div className="form-group">
-                                        <label htmlFor="address" className="form-label">Address</label>
+                                        <label htmlFor="address" className="form-label">
+                                            Address
+                                        </label>
                                         <textarea
                                             className="form-control h-100"
                                             id="address"
@@ -187,16 +388,21 @@ function CustomerAdd() {
                                 </div>
                                 <div className="col-3 mt-3 mx-auto">
                                     <div className="form-group">
-                                        <button className="comman-btn w-100" onClick={()=>console.log(formData)}>Add</button>
+                                        <button
+                                            className="comman-btn w-100"
+                                            type="submit"
+                                        >
+                                            Add
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
-            </div >
+            </div>
         </>
-    )
+    );
 }
 
-export default CustomerAdd
+export default CustomerAdd;

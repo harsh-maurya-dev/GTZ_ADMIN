@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import customer_image from "../assets/img/bg-img/ChatBc.webp"
-import user2 from "../assets/img/user/user-2.jpg"
-import user3 from "../assets/img/user/user-3.jpg"
-import user4 from "../assets/img/user/user-4.jpg"
-import user6 from "../assets/img/user/user-6 (1).jpg"
+// import user2 from "../assets/img/user/user-2.jpg"
+// import user3 from "../assets/img/user/user-3.jpg"
+// import user4 from "../assets/img/user/user-4.jpg"
+// import user6 from "../assets/img/user/user-6 (1).jpg"
 import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
@@ -11,69 +11,6 @@ import { toast } from 'react-toastify'
 
 const Customer = () => {
     const [customerDetails, setCustomerDetails] = useState([])
-    const users = [
-        {
-            id: 1,
-            image: user2,
-            name: "Georgeanna Ramero",
-            email: "georgeanna@gmail.com",
-            mobile: "(480) 914-6565",
-            username: "MathAnder",
-            newsletter: "No",
-            address: "47 W 13th St, New York, NY 10011",
-            dateOfRegistration: "20-02-2024",
-            language: "English",
-        },
-        {
-            id: 2,
-            image: user3,
-            name: "Cami Macha",
-            email: "cami@gmail.com",
-            mobile: "(480) 914-6565",
-            username: "CAMCHA",
-            newsletter: "No",
-            address: "47 W 13th St, New York, NY 10011",
-            dateOfRegistration: "20-02-2024",
-            language: "English",
-        },
-        {
-            id: 3,
-            image: user4,
-            name: "Alda Ziemer",
-            email: "Alda@gmail.com",
-            mobile: "(480) 914-6565",
-            username: "ALZIMER",
-            newsletter: "No",
-            address: "47 W 13th St, New York, NY 10011",
-            dateOfRegistration: "20-02-2024",
-            language: "English",
-        },
-        {
-            id: 4,
-            image: user6,
-            name: "Dalton Paden",
-            email: "Dalyton@gmail.com",
-            mobile: "(480) 914-6565",
-            username: "Dalen",
-            newsletter: "No",
-            address: "47 W 13th St, New York, NY 10011",
-            dateOfRegistration: "20-02-2024",
-            language: "French",
-        },
-    ];
-
-    // const fetchData = () => {
-    //     const response = new Promise((resolve) => {
-    //         setTimeout(() => {
-    //             resolve(users)
-    //         }, 1000)
-    //     })
-
-    //     response.then((data) => {
-    //         setCustomerDetails(data)
-    //         console.log("resolved")
-    //     })
-    // }
 
     const fetchCustomer = async () => {
         const token = localStorage.getItem("token")
@@ -107,7 +44,6 @@ const Customer = () => {
     }
 
     useEffect(() => {
-        // fetchData()
         fetchCustomer()
     }, [])
 
@@ -197,7 +133,7 @@ const Customer = () => {
                                     </thead>
                                     <tbody>
                                         {customerDetails.map((customer, index) => (
-                                            <tr key={customer.id}>
+                                            <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <div className="d-flex justify-content-center align-items-center">
@@ -210,13 +146,13 @@ const Customer = () => {
                                                 <td>{customer.email}</td>
                                                 <td>{`(${customer.country_code}) ${customer.phone_number}`}</td>
                                                 <td>{`${customer.first_name} ${customer.last_name}`}</td>
-                                                <td>{customer.newsletter}</td>
-                                                <td>{customer.language}</td>
-                                                <td>{customer.address}</td>
+                                                <td>{customer.newsletter || "No"}</td>
+                                                <td>{customer.language || "English"}</td>
+                                                <td>{customer.address || "--"}</td>
                                                 <td>{formatDate(customer.createdAt)}</td>
                                                 <td>
                                                     <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                        <Link to={`/customers_view/${index}`} className="table-icon bg-success">
+                                                        <Link to={`/customers_view/${customer._id}`} className="table-icon bg-success">
                                                             <i className="fa-solid fa-desktop"></i>
                                                         </Link>
                                                         <a href="customer_edit.html" className="table-icon bg-main">

@@ -1,7 +1,50 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import user_image from "../assets/img/user/user-3.jpg"
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function CustomerView() {
+
+    const { id } = useParams(); // Get the ID from the route
+    const [customer, setCustomer] = useState({});
+    const [loading, setLoading] = useState(true)
+    const {user_name, first_name, last_name, email, country, state, city, phone_number, pin_code,newsletter, country_code, createdAt, address} = customer
+
+    function formatDate (newdata){
+        if (!loading) {
+            const date = newdata.split("T")[0]
+            return date
+        }
+    }
+
+    useEffect(() => {
+        const fetchCustomer = async () => {
+            const token = localStorage.getItem("token");
+
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/user/getCustomerDetails/${id}`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "x-auth-token-user": token,
+                        },
+                    }
+                );
+                setCustomer(response.data.results?.customer);
+                setLoading(false)
+                console.log(response.data.results.customer);
+            } catch (error) {
+                setLoading(true)
+                console.error("Error fetching customer details:", error);
+            }
+        };
+
+        fetchCustomer();
+    }, [id]);
+
+
+
     return (
         <>
             <div className="mt-4">
@@ -20,7 +63,7 @@ function CustomerView() {
                         </div>
                     </div>
                     <div className="">
-                        <h2 className="text-center profile-text">Mathew Anderson</h2>
+                        <h2 className="text-center profile-text">{user_name}</h2>
                     </div>
                     <div className="row mt-4">
                         <div className="col-12">
@@ -280,7 +323,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-user-circle"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">Mathew Anderson</h3>
+                                                <h3 className="fs-6 fw-semibold">{`${first_name} ${last_name}`}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -293,7 +336,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-envelope"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">Mathew@gmail.com</h3>
+                                                <h3 className="fs-6 fw-semibold">{email}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -319,7 +362,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-user"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">MathAnder</h3>
+                                                <h3 className="fs-6 fw-semibold">{user_name}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -332,7 +375,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-newspaper"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">No</h3>
+                                                <h3 className="fs-6 fw-semibold">{newsletter ? newsletter : "No"}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -359,7 +402,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-phone-volume"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">+1 123-123-3454</h3>
+                                                <h3 className="fs-6 fw-semibold">{`${country_code} ${phone_number}`}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -385,7 +428,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-globe-europe"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">47 W 13th St, New York, NY 10011
+                                                <h3 className="fs-6 fw-semibold">{address}
                                                 </h3>
                                             </div>
                                         </div>
@@ -399,7 +442,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-globe"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">13th Street
+                                                <h3 className="fs-6 fw-semibold">{city}
                                                 </h3>
                                             </div>
                                         </div>
@@ -413,7 +456,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-globe-asia"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold"></h3>
+                                                <h3 className="fs-6 fw-semibold">{state}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -426,7 +469,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-file-archive"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold"></h3>
+                                                <h3 className="fs-6 fw-semibold">{pin_code}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -439,7 +482,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-globe-americas"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">USA</h3>
+                                                <h3 className="fs-6 fw-semibold">{country}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -453,7 +496,7 @@ function CustomerView() {
                                                 <i className="fa-solid fa-registered"></i>
                                             </div>
                                             <div className="">
-                                                <h3 className="fs-6 fw-semibold">20-02-2024</h3>
+                                                <h3 className="fs-6 fw-semibold">{formatDate(createdAt)}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -663,7 +706,7 @@ function CustomerView() {
                             <div className="comman-design-header comman-accordin">
                                 <h2 className="comman-heading">Prop Account</h2>
                             </div>
-                            <div className="comman-design-body comman-accordin-content p-0" style={{height:"0px"}}>
+                            <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
                                 <div className="table-responsive">
                                     <table className="table table-hover">
                                         <thead>
@@ -693,7 +736,7 @@ function CustomerView() {
                             <div className="comman-design-header comman-accordin">
                                 <h2 className="comman-heading">Competition Account</h2>
                             </div>
-                            <div className="comman-design-body comman-accordin-content p-0" style={{height:"0px"}}>
+                            <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
                                 <div className="table-responsive">
                                     <table className="table table-hover">
                                         <thead>
@@ -720,7 +763,7 @@ function CustomerView() {
                             <div className="comman-design-header comman-accordin">
                                 <h2 className="comman-heading">IP Log</h2>
                             </div>
-                            <div className="comman-design-body comman-accordin-content p-0" style={{height:"0px"}}>
+                            <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
                                 <div className="table-responsive">
                                     <table className="table table-hover">
                                         <thead>
@@ -743,7 +786,7 @@ function CustomerView() {
                             <div className="comman-design-header comman-accordin">
                                 <h2 className="comman-heading">Emails</h2>
                             </div>
-                            <div className="comman-design-body comman-accordin-content p-0" style={{height:"0px"}}>
+                            <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
                                 <div className="form-design">
                                     <div className="row">
                                         <div className="col-4">
@@ -801,7 +844,7 @@ function CustomerView() {
                             <div className="comman-design-header comman-accordin">
                                 <h2 className="comman-heading">Edit Log</h2>
                             </div>
-                            <div className="comman-design-body comman-accordin-content p-0" style={{height:"0px"}}>
+                            <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
                                 <div className="table-responsive">
                                     <table className="table table-hover">
                                         <thead>
@@ -826,7 +869,7 @@ function CustomerView() {
                             <div className="comman-design-header comman-accordin">
                                 <h2 className="comman-heading">Note</h2>
                             </div>
-                            <div className="comman-design-body comman-accordin-content p-0" style={{height:"0px"}}>
+                            <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
                                 <div className="table-responsive">
                                     <table className="table table-hover">
                                         <thead>
@@ -849,7 +892,7 @@ function CustomerView() {
                             <div className="comman-design-header comman-accordin">
                                 <h2 className="comman-heading">Customer Analytics</h2>
                             </div>
-                            <div className="comman-design-body comman-accordin-content p-0" style={{height:"0px"}}>
+                            <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
                                 <div className="table-responsive">
                                     <table className="table table-hover">
                                         <thead>

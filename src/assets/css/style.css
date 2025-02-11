@@ -448,6 +448,10 @@ input {
     border-color: #007bff !important;
 }
 
+.country-name{
+    color: black;
+}
+
 .form-select {
     height: 45px;
     line-height: 45px;
