@@ -13,8 +13,8 @@ function CustomerAdd() {
         setValue,
         watch,
         control,
-        reset
-
+        reset,
+        clearErrors
     } = useForm({
         defaultValues: {
             first_name: '',
@@ -29,7 +29,7 @@ function CustomerAdd() {
             phone_number: '',
             country_code: ""
         }
-    })
+    });
 
     const [countries, setCountries] = useState([]);
     const [states, setStates] = useState([]);
@@ -38,13 +38,10 @@ function CustomerAdd() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const fetchCountries = async () => {
-        setLoading(true); // Start loading
+        setLoading(true);
         try {
-            const response = await axios.get(
-                `${import.meta.env.VITE_LOCATION_API_URL}/countries`
-            );
+            const response = await axios.get(`${import.meta.env.VITE_LOCATION_API_URL}/countries`);
             setCountries(response.data.data);
-            // console.log(response.data.data);
         } catch (error) {
             console.error("Error fetching countries:", error);
             toast.error("Failed to fetch countries. Please try again later.", {
@@ -55,46 +52,15 @@ function CustomerAdd() {
         }
     };
 
-    // const countriesFetchWithPhoneNumber = async (value) => {
-    //     try {
-    //         const formData = new URLSearchParams();
-    //         formData.append("country", selectedCountry);
-
-    //         const response = await axios.post(
-    //             `${import.meta.env.VITE_LOCATION_API_URL}/countries/states`,
-    //             formData,
-    //             {
-    //                 headers: {
-    //                     "Content-Type": "application/x-www-form-urlencoded",
-    //                 },
-    //             }
-    //         );
-    //         if (response.data && response.data.data) {
-    //             setStates(response.data.data.states); // Update states list
-    //         } else {
-    //             setStates([]); // Reset states if no data found
-    //         }
-
-    //         // console.log(response.data.data.states); // Handle the response data
-    //     } catch (error) {
-    //         console.error("Error fetching states:", error);
-    //     }
-    // }
-
-    const handleCountryChange = async (event) => {
-        const countryName = watch("country")
-        const selectedCountry = event.target.value;
-        errors.country = ""
-        setValue("country", selectedCountry)
-        setValue("state", "")
-        setValue("city", "")
-        clearErrors("country")
-        // setFormData((prev) => ({ ...prev, country: selectedCountry }));
-
+    const handleCountryChange = async (countryName) => {
+        setValue("country", countryName);
+        setValue("state", "");
+        setValue("city", "");
+        clearErrors("country");
 
         try {
             const formData = new URLSearchParams();
-            formData.append("country", selectedCountry);
+            formData.append("country", countryName);
 
             const response = await axios.post(
                 `${import.meta.env.VITE_LOCATION_API_URL}/countries/states`,
@@ -105,29 +71,18 @@ function CustomerAdd() {
                     },
                 }
             );
-            // if (response.data && response.data.data) {
-            //     setStates(response.data.data.states); // Update states list
-            // } else {
-            //     setStates([]); // Reset states if no data found
-            // }
-
-            // console.log(response.data.data.states); // Handle the response data
-
             setStates(response.data?.data?.states || []);
-
         } catch (error) {
             console.error("Error fetching states:", error);
-            setStates([])
+            setStates([]);
         }
-
-        // countriesFetchWithPhoneNumber()
     };
 
     const handleStateChange = async (event) => {
         const selectedState = event.target.value;
         errors.state = "";
         setValue("state", selectedState);
-        setValue("city", ""); // Reset city when state changes
+        setValue("city", "");
 
         const selectedCountry = watch('country');
 
@@ -151,7 +106,6 @@ function CustomerAdd() {
             } else {
                 setCities([]);
             }
-            // console.log(response.data.data);
         } catch (error) {
             console.error("Error fetching cities:", error);
             setCities([]);
@@ -160,28 +114,9 @@ function CustomerAdd() {
 
     const handleCityChange = async (event) => {
         const selectedCity = event.target.value;
-        // setFormData((prev) => ({ ...prev, city: selectedCity }));
-        setValue("city", selectedCity)
-        errors.city = ""
+        setValue("city", selectedCity);
+        errors.city = "";
     };
-
-
-    // const handlePhoneChange = (value, countryData) => {
-    //     const countryCode = `+${countryData.dialCode}`;
-    //     let cleanedValue = value.replace(/\D/g, "");
-    //     let countryCodeOnly = countryCode.replace(/\D/g, "");
-    //     let phoneNumberWithoutCountry = cleanedValue.startsWith(countryCodeOnly)
-    //         ? cleanedValue.slice(countryCodeOnly.length)
-    //         : cleanedValue;
-    //         setValue("phone_number", phoneNumberWithoutCountry)
-    //         setValue("country_code", countryCodeOnly)
-    // };
-
-    // const handleFormSubmit = async () => {
-    //     console.log(formData);
-
-    //     await createCustomer()
-    // }
 
     useEffect(() => {
         fetchCountries();
@@ -191,23 +126,19 @@ function CustomerAdd() {
         setIsSubmitting(true);
 
         console.log("Form Data Submitted:", data);
-        console.log("Form Errors:", errors); // ✅ Log all form errors
+        console.log("Form Errors:", errors);
 
         if (!data) {
             console.error("Form data is undefined.");
             return;
         }
 
-        // console.log("Submitting Data:", data);
         const formData = {
             ...data,
             country_code: data.contact?.countryCode || '',
             phone_number: data.contact?.phoneNumber || ''
         };
-        
-        
 
-        // e.preventDefault()
         const token = localStorage.getItem("token");
         if (!token) {
             toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
@@ -240,21 +171,16 @@ function CustomerAdd() {
                     country_code: ''
                 });
                 console.log("successfully hit api");
-
             } else {
                 toast.error(response.data.message || "An error occurred while creating the customer.", {
                     style: { backgroundColor: "#1a406a", color: "#fff" },
                 });
                 console.log("rejected the apii, cuz in res get error tru");
-
             }
         } catch (error) {
             console.error("Error creating customer:", error);
-            // toast.error(error.response?.data?.message || error.message || "An unexpected error occurred.", {
-            //     style: { backgroundColor: "#1a406a", color: "#fff" },
-            // });
-        }finally{
-            setIsSubmitting(false)
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -266,10 +192,7 @@ function CustomerAdd() {
                         <h2 className="comman-heading">Customer Add</h2>
                     </div>
                     <div className="comman-design-body">
-                        <form className="form-design"
-                            // onSubmit={handleSubmit}
-                            onSubmit={handleSubmit(onSubmit)}
-                        >
+                        <form className="form-design" onSubmit={handleSubmit(onSubmit)}>
                             <div className="row">
                                 <div className="col-6">
                                     <div className="form-group">
@@ -279,7 +202,6 @@ function CustomerAdd() {
                                         <input
                                             type="text"
                                             className={`form-control ${errors.first_name ? 'is-invalid' : ''}`}
-                                            // id="first_name"
                                             name="first_name"
                                             {...register('first_name', {
                                                 required: 'First name is required',
@@ -303,7 +225,6 @@ function CustomerAdd() {
                                         <input
                                             type="text"
                                             className={`form-control ${errors.last_name ? 'is-invalid' : ''}`}
-                                            // id="last_name"
                                             name="last_name"
                                             {...register('last_name', {
                                                 required: 'Last name is required',
@@ -327,7 +248,6 @@ function CustomerAdd() {
                                         <input
                                             type="email"
                                             className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                                            // id="email"
                                             name="email"
                                             {...register('email', {
                                                 required: 'Email is required',
@@ -343,53 +263,17 @@ function CustomerAdd() {
                                     </div>
                                 </div>
 
-                                {/* <div className="col-6">
-                                    <div className="form-group">
-                                        <label htmlFor="phone_number" className="form-label">
-                                            Mobile No.
-                                        </label>
-                                        <PhoneInput
-                                            inputStyle={{
-                                                fontWeight: "400",
-                                                marginBottom: "0.25rem",
-                                                margin: ".75rem 0",
-                                                width: "100%",
-                                                padding: "1.3rem 3rem",
-                                                borderRadius: "50px",
-                                            }}
-                                            country={"us"}
-                                            value={`${watch('country_code')}${watch('phone_number')}`}
-                                            onChange={handlePhoneChange}
-                                            inputclassName={`form-control custom-phone-input ${errors.phone_number ? 'is-invalid' : ''
-                                                }`}
-                                            {...register('phone_number', {
-                                                required: 'Phone number is required',
-                                                minLength: {
-                                                    value: 10,
-                                                    message: 'Phone number must be at least 10 digits'
-                                                }
-                                            })}
-                                        />
-                                        {errors.phone_number && (
-                                            <div className="invalid-feedback">{errors.phone_number.message}</div>
-                                        )}
-                                    </div>
-                                </div> */}
-
                                 <div className="col-6">
                                     <div className="form-group">
                                         <label htmlFor="contact" className="form-label">Phone Number</label>
                                         <Controller
-                                            className={`form-control ${errors.contact ? "input-error" : ""
-                                                }`}
                                             name="contact"
                                             control={control}
                                             rules={{ required: "Phone number is required" }}
                                             render={({ field }) => (
                                                 <PhoneInput
                                                     country={"us"}
-                                                    inputclassName={`form-control custom-phone-input ${errors.contact ? 'is-invalid' : ''
-                                                        }`}
+                                                    inputclassName={`form-control custom-phone-input ${errors.contact ? 'is-invalid' : ''}`}
                                                     inputStyle={{
                                                         fontWeight: "400",
                                                         marginBottom: "0.25rem",
@@ -398,28 +282,22 @@ function CustomerAdd() {
                                                         padding: "1.3rem 3rem",
                                                         borderRadius: "50px",
                                                     }}
-                                                    value={
-                                                        field?.value?.phoneNumber
-                                                            ? `${field?.value?.countryCode}${field?.value?.phoneNumber}`
-                                                            : ""
-                                                    }
+                                                    value={field?.value?.phoneNumber ? `${field?.value?.countryCode}${field?.value?.phoneNumber}` : ""}
                                                     onChange={(value, countryData) => {
-                                                        setValue("country", countryData.name)
-                                                        const phoneNumberWithoutCountry = value.slice(
-                                                            countryData.dialCode.length
-                                                        );
+                                                        const phoneNumberWithoutCountry = value.slice(countryData.dialCode.length);
                                                         field.onChange({
                                                             phoneNumber: phoneNumberWithoutCountry,
                                                             countryCode: `+${countryData.dialCode}`,
                                                         });
+                                                        handleCountryChange(countryData.name); // Update country and fetch states
                                                     }}
                                                 />
                                             )}
                                         />
+                                        {errors.contact && (
+                                            <p className="invalid-feedback">{errors.contact.message}</p>
+                                        )}
                                     </div>
-                                    {errors.contact && (
-                                        <p className="invalid-feedback">{errors.contact.message}</p>
-                                    )}
                                 </div>
 
                                 <div className="col-6">
@@ -433,7 +311,7 @@ function CustomerAdd() {
                                             {...register('country', {
                                                 required: 'Please select a country'
                                             })}
-                                            onChange={handleCountryChange}
+                                            onChange={(e) => handleCountryChange(e.target.value)}
                                         >
                                             <option value="">Select a Country</option>
                                             {loading ? (
@@ -494,7 +372,7 @@ function CustomerAdd() {
                                         </label>
                                         <select
                                             className={`form-control ${errors.city ? 'is-invalid' : ''}`}
-                                            disabled={!watch('state')} // Only disable if no state is selected
+                                            disabled={!watch('state')}
                                             name="city"
                                             {...register('city', {
                                                 required: 'Please select a city'
@@ -526,7 +404,7 @@ function CustomerAdd() {
                                             Pin Code
                                         </label>
                                         <input
-                                        maxLength={6}
+                                            maxLength={6}
                                             type="number"
                                             className={`form-control ${errors.pin_code ? 'is-invalid' : ''}`}
                                             id="pin_code"
