@@ -11,6 +11,9 @@ import { toast } from 'react-toastify'
 
 const Customer = () => {
     const [customerDetails, setCustomerDetails] = useState([])
+    const [isOpenPopup, setIsOpenPopup] = useState(false)
+    const [selectedCustomerId, setSelectedCustomerId] = useState(null);  // For holding selected customer ID
+
 
     const fetchCustomer = async () => {
         const token = localStorage.getItem("token")
@@ -19,7 +22,7 @@ const Customer = () => {
             return;
         }
         try {
-            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/user/getCustomerList`,{},
+            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/user/getCustomerList`, {},
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -27,20 +30,45 @@ const Customer = () => {
                     }
                 }
             )
-            if(response.data.error === false){
+            if (response.data.error === false) {
                 setCustomerDetails(response.data.results.customers)
-                console.log(response.data.results);
-                
+                // console.log(response.data.results);
+
             }
         } catch (error) {
             toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            console.log(error);
+            // console.log(error);
         }
     }
-    
-    function formatDate (createdAt){
+
+    function formatDate(createdAt) {
         const date = createdAt.split("T")[0]
         return date
+    }
+
+    const deleteCustomer = async (id) => {
+        const token = localStorage.getItem("token")
+        try {
+            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/user/deleteCustomer/${id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-auth-token-user": token,
+                    },
+                }
+            )
+            if (response.data.error === false) {
+                toast.success(response.data.message);
+                setIsOpenPopup(false)
+                fetchCustomer()
+            }
+            else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            toast.error(error)
+        }
+
     }
 
     useEffect(() => {
@@ -158,9 +186,66 @@ const Customer = () => {
                                                         <a href="customer_edit.html" className="table-icon bg-main">
                                                             <i className="fa-solid fa-pencil"></i>
                                                         </a>
-                                                        <a href="#" className="table-icon bg-danger">
+                                                        <div class="table-icon bg-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
+                                                            onClick={() => {
+                                                                setSelectedCustomerId(customer._id);  // Set selected customer ID
+                                                                setIsOpenPopup(true);  // Open the modal
+                                                            }}>
                                                             <i className="fa-solid fa-trash"></i>
-                                                        </a>
+                                                        </div>
+                                                        {/* delete popup */}
+                                                        {/* <div class="modal fade " id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content delete-user-modal">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title text-white" id="deleteUserModalLabel">
+                                                                            <i class="fa fa-user-circle"></i>
+                                                                            Confirm Delete User's
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close text-white bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body text-center">
+                                                                        <div class="delete-icon">
+                                                                            <i class="fa fa-times"></i>
+                                                                        </div>
+                                                                        <p class="mt-3 text-white">Are you sure you want to delete this user?</p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                                                        <button type="button" class="btn btn-danger" id="confirmDelete" onClick={deleteCustomer(customer._id)}>Delete</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div> */}
+
+                                                        {isOpenPopup && (
+                                                            <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
+                                                                aria-hidden="true">
+                                                                <div className="modal-dialog modal-dialog-centered">
+                                                                    <div className="modal-content delete-user-modal">
+                                                                        <div className="modal-header">
+                                                                            <h5 className="modal-title text-white" id="deleteUserModalLabel">
+                                                                                <i className="fa fa-user-circle"></i> {" "}Confirm Delete User
+                                                                            </h5>
+                                                                            <button type="button" className="btn-close text-white bg-white" data-bs-dismiss="modal"
+                                                                                aria-label="Close" id="closeDeleteUserModal" onClick={() => setIsOpenPopup(false)}></button>
+                                                                        </div>
+                                                                        <div className="modal-body text-center">
+                                                                            <div className="delete-icon">
+                                                                                <i className="fa fa-times"></i>
+                                                                            </div>
+                                                                            <p className="mt-3 text-white">Are you sure you want to delete this user?</p>
+                                                                        </div>
+                                                                        <div className="modal-footer">
+                                                                            <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>
+                                                                            <button type="button" className="btn btn-danger" id="confirmDelete" onClick={() => deleteCustomer(selectedCustomerId)}>Delete</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -171,6 +256,21 @@ const Customer = () => {
                                     <ShimmerEffect />
                             }
                         </div>
+                        <nav aria-label="...">
+                            <ul class="pagination justify-content-end pt-2">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item ">
+                                    <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

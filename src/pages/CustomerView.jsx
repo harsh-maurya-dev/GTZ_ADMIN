@@ -8,12 +8,30 @@ function CustomerView() {
     const { id } = useParams(); // Get the ID from the route
     const [customer, setCustomer] = useState({});
     const [loading, setLoading] = useState(true)
-    const {user_name, first_name, last_name, email, country, state, city, phone_number, pin_code,newsletter, country_code, createdAt, address} = customer
+    const { user_name, first_name, last_name, email, country, state, city, phone_number, pin_code, newsletter, country_code, createdAt, address } = customer
 
-    function formatDate (newdata){
+    function formatDate(newdata) {
         if (!loading) {
             const date = newdata.split("T")[0]
             return date
+        }
+    }
+
+    function handleToggle(event) {
+        const parent = event.currentTarget.closest(".comman-design2");
+        const element = parent?.querySelector(".comman-design-body");
+        if (!element) {
+            console.error("Element not found!");
+            return;
+        }
+        const height = element.scrollHeight;
+        element.classList.toggle("p-0");
+        if (element.classList.contains("p-0")) {
+            element.style.height = "0";
+            event.currentTarget.closest(".commanAccordin")?.classList.remove("show");
+        } else {
+            element.style.height = `${height + 40}px`;
+            event.currentTarget.closest(".commanAccordin")?.classList.add("show");
         }
     }
 
@@ -33,7 +51,7 @@ function CustomerView() {
                 );
                 setCustomer(response.data.results?.customer);
                 setLoading(false)
-                console.log(response.data.results.customer);
+                // console.log(response.data.results.customer);
             } catch (error) {
                 setLoading(true)
                 console.error("Error fetching customer details:", error);
@@ -314,7 +332,7 @@ function CustomerView() {
                             </div>
                             <div className="comman-design-body">
                                 <div className="row">
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Name</h2>
                                         </div>
@@ -327,7 +345,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Email</h2>
                                         </div>
@@ -340,7 +358,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Verified</h2>
                                         </div>
@@ -353,7 +371,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">UserName</h2>
                                         </div>
@@ -366,7 +384,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Newsletter</h2>
                                         </div>
@@ -379,7 +397,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">MT4 Password
                                             </h2>
@@ -393,7 +411,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Mobile No.</h2>
                                         </div>
@@ -406,7 +424,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Company</h2>
                                         </div>
@@ -419,7 +437,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Address</h2>
                                         </div>
@@ -433,7 +451,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">city</h2>
                                         </div>
@@ -447,7 +465,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">State</h2>
                                         </div>
@@ -460,7 +478,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Zip</h2>
                                         </div>
@@ -473,7 +491,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Country</h2>
                                         </div>
@@ -486,7 +504,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Date Of
                                                 Registeration</h2>
@@ -500,7 +518,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Referrer Name
                                             </h2>
@@ -514,7 +532,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Referrer
                                                 Customer ID</h2>
@@ -528,7 +546,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Public UserName
                                             </h2>
@@ -542,7 +560,7 @@ function CustomerView() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="details-item col-3">
+                                    <div className="details-item col-6">
                                         <div className="">
                                             <h2 className="comman-heading fw-medium text-dark-light">Public Country
                                             </h2>
@@ -703,7 +721,7 @@ function CustomerView() {
                     </div>
                     <div className="col-12 mt-4">
                         <div className="comman-design2">
-                            <div className="comman-design-header comman-accordin">
+                            <div className="comman-design-header comman-accordin" onClick={handleToggle}>
                                 <h2 className="comman-heading">Prop Account</h2>
                             </div>
                             <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
@@ -733,7 +751,7 @@ function CustomerView() {
                     </div>
                     <div className="col-12 mt-4">
                         <div className="comman-design2">
-                            <div className="comman-design-header comman-accordin">
+                            <div className="comman-design-header comman-accordin" onClick={handleToggle}>
                                 <h2 className="comman-heading">Competition Account</h2>
                             </div>
                             <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
@@ -757,10 +775,11 @@ function CustomerView() {
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <div className="col-12 mt-4">
                         <div className="comman-design2">
-                            <div className="comman-design-header comman-accordin">
+                            <div className="comman-design-header comman-accordin" onClick={handleToggle}>
                                 <h2 className="comman-heading">IP Log</h2>
                             </div>
                             <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
@@ -783,7 +802,7 @@ function CustomerView() {
                     </div>
                     <div className="col-12 mt-4">
                         <div className="comman-design2">
-                            <div className="comman-design-header comman-accordin">
+                            <div className="comman-design-header comman-accordin" onClick={handleToggle}>
                                 <h2 className="comman-heading">Emails</h2>
                             </div>
                             <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
@@ -841,7 +860,7 @@ function CustomerView() {
                     </div>
                     <div className="col-12 mt-4">
                         <div className="comman-design2">
-                            <div className="comman-design-header comman-accordin">
+                            <div className="comman-design-header comman-accordin" onClick={handleToggle}>
                                 <h2 className="comman-heading">Edit Log</h2>
                             </div>
                             <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
@@ -866,7 +885,7 @@ function CustomerView() {
                     </div>
                     <div className="col-12 mt-4">
                         <div className="comman-design2">
-                            <div className="comman-design-header comman-accordin">
+                            <div className="comman-design-header comman-accordin" onClick={handleToggle}>
                                 <h2 className="comman-heading">Note</h2>
                             </div>
                             <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>
@@ -889,7 +908,7 @@ function CustomerView() {
                     </div>
                     <div className="col-12 mt-4">
                         <div className="comman-design2">
-                            <div className="comman-design-header comman-accordin">
+                            <div className="comman-design-header comman-accordin" onClick={handleToggle}>
                                 <h2 className="comman-heading">Customer Analytics</h2>
                             </div>
                             <div className="comman-design-body comman-accordin-content p-0" style={{ height: "0px" }}>

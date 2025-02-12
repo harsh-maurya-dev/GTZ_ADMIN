@@ -32,3 +32,27 @@ input[type="number"] {
   cursor: pointer;
   height: 80px;
 }
+
+.delete-icon {
+  width: 60px;
+  height: 60px;
+  line-height: 58px;
+  text-align: center;
+  border: 1px solid;
+  border-radius: 50%;
+  background-color: #dc3545;
+  color: #FFFFFF;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 26px;
+}
+
+.user-modal {
+  width: 100%;
+  background-color: #00000016;
+  /* backdrop-filter: blur(20px); */
+}
+
+.delete-user-modal {
+  background: linear-gradient(180deg, #2A6BAC 0%, #000000a8  100%);
+}
