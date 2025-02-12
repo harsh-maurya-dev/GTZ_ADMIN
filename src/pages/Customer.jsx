@@ -183,9 +183,9 @@ const Customer = () => {
                                                         <Link to={`/customers_view/${customer._id}`} className="table-icon bg-success">
                                                             <i className="fa-solid fa-desktop"></i>
                                                         </Link>
-                                                        <a href="customer_edit.html" className="table-icon bg-main">
+                                                        <Link to={`/customer_edit/${customer._id}`} className="table-icon bg-main">
                                                             <i className="fa-solid fa-pencil"></i>
-                                                        </a>
+                                                        </Link>
                                                         <div class="table-icon bg-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
                                                             onClick={() => {
                                                                 setSelectedCustomerId(customer._id);  // Set selected customer ID
