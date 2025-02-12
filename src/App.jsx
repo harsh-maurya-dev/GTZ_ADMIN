@@ -37,6 +37,7 @@ import CustomerAdd from './pages/CustomerAdd';
 import ChallengeAdd from './pages/ChallengeAdd';
 import ChallengeEdit from './pages/ChallengeEdit';
 import CustomerView from './pages/CustomerView';
+import CustomerEdit from './pages/CustomerEdit';
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
             <Route path="/customers_management" element={<Customer />} />
             <Route path="/customers_view/:id" element={<CustomerView />} />
             <Route path="/customer_add" element={<CustomerAdd />} />
+            <Route path="/customer_edit/:id" element={<CustomerEdit />} />
             <Route path="/trading_platform" element={<TradingPlatform />} />
             <Route path="/challenge_management" element={<Challenge />} />
             <Route path="/challenge_add" element={<ChallengeAdd />} />
