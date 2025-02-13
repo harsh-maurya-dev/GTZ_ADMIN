@@ -54,6 +54,11 @@ const Header = () => {
         setCurrentTheme(newTheme);
     };
 
+    const logout = () => {
+        localStorage.removeItem("token")
+        window.location.reload()
+    }
+
     // function toggleMenu () {
     //     setIsOpenProfile((prevState)=> !prevState)
     // }
@@ -93,13 +98,13 @@ const Header = () => {
                         </div>
                         <div className={isOpenProfile ? "menu" : "menu active"} ref={menuRef}>
                             <ul>
-                                <li><Link to="/profile_info" onClick={()=>setIsOpenProfile(!isOpenProfile)}><i
+                                <li><Link to="/profile_info" onClick={() => setIsOpenProfile(!isOpenProfile)}><i
                                     className="fa-solid fa-user text-main"></i>&nbsp;Profile</Link></li>
-                                <li><Link to="/settings" onClick={()=>setIsOpenProfile(!isOpenProfile)}><i className="fa-solid fa-gear text-main"></i>&nbsp;Settings</Link>
+                                <li><Link to="/settings" onClick={() => setIsOpenProfile(!isOpenProfile)}><i className="fa-solid fa-gear text-main"></i>&nbsp;Settings</Link>
                                 </li>
-                                <li><Link to="/help" onClick={()=>setIsOpenProfile(!isOpenProfile)}><i
+                                <li><Link to="/help" onClick={() => setIsOpenProfile(!isOpenProfile)}><i
                                     className="fa-brands fa-hire-a-helper text-main"></i>&nbsp;Help</Link></li>
-                                <li><button type="button"><i
+                                <li><button type="button" onClick={logout}><i
                                     className="fa-solid fa-right-from-bracket text-main"></i>&nbsp;Sign
                                     Out</button></li>
                             </ul>

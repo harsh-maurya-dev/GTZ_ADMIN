@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import customer_image from "../assets/img/bg-img/ChatBc.webp"
-// import user2 from "../assets/img/user/user-2.jpg"
-// import user3 from "../assets/img/user/user-3.jpg"
-// import user4 from "../assets/img/user/user-4.jpg"
-// import user6 from "../assets/img/user/user-6 (1).jpg"
 import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
@@ -12,48 +8,59 @@ import { toast } from 'react-toastify'
 const Customer = () => {
     const [customerDetails, setCustomerDetails] = useState([])
     const [isOpenPopup, setIsOpenPopup] = useState(false)
-    const [selectedCustomerId, setSelectedCustomerId] = useState(null);  // For holding selected customer ID
+    const [selectedCustomerId, setSelectedCustomerId] = useState(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [loading, setLoading] = useState(false)
+    const [totalCustomers, setTotalCustomers] = useState(0)
+    const pageSize = 10
 
-
-    const fetchCustomer = async () => {
+    const fetchCustomer = async (page) => {
+        setLoading(true)
         const token = localStorage.getItem("token")
         if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            return;
+            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } })
+            setLoading(false)
+            return
         }
+    
         try {
-            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/user/getCustomerList`, {},
+            const params = new URLSearchParams()
+            params.append("page", page)
+            params.append("pageSize", pageSize)
+    
+            const response = await axios.patch(
+                `${import.meta.env.VITE_API_URL}/user/getCustomerList`,
+                params,
                 {
                     headers: {
-                        "Content-Type": "application/json",
+                        "accept": "application/json",
                         "x-auth-token-user": token,
-                    }
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
                 }
             )
+    
             if (response.data.error === false) {
                 setCustomerDetails(response.data.results.customers)
-                // console.log(response.data.results);
-
+                setTotalPages(response.data.results.totalPages || 1)
+                setTotalCustomers(response.data.results.totalCustomers || 0)
             }
         } catch (error) {
-            toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            // console.log(error);
+            toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+        } finally {
+            setLoading(false)
         }
-    }
-
-    function formatDate(createdAt) {
-        const date = createdAt.split("T")[0]
-        return date
     }
 
     const deleteCustomer = async (id) => {
-        // document.getElementById("confirmDelete").setAttribute("disabled", "true");
         const button = document.getElementById("confirmDelete")
-        button.style.cursor = "not-allowed";
+        button.style.cursor = "not-allowed"
 
         const token = localStorage.getItem("token")
         try {
-            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/user/deleteCustomer/${id}`,
+            const response = await axios.delete(
+                `${import.meta.env.VITE_API_URL}/user/deleteCustomer/${id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -62,33 +69,45 @@ const Customer = () => {
                 }
             )
             if (response.data.error === false) {
-                toast.success(response.data.message);
+                toast.success(response.data.message)
                 setIsOpenPopup(false)
-                fetchCustomer()
-            }
-            else {
-                toast.error(response.data.message);
+                // Refresh current page after deletion
+                fetchCustomer(currentPage)
+            } else {
+                toast.error(response.data.message)
             }
         } catch (error) {
-            toast.error(error)
+            toast.error(error.message)
+        } finally {
+            button.style.cursor = "pointer"
         }
-
     }
 
+    const handlePageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage)
+        }
+    }
+
+    // Add currentPage to dependency array to fetch data when page changes
     useEffect(() => {
-        fetchCustomer()
-    }, [])
+        fetchCustomer(currentPage)
+    }, [currentPage])
+
+    function formatDate(createdAt) {
+        const date = createdAt.split("T")[0]
+        return date
+    }
 
     return (
         <>
-            {/* customer-management */}
             <div className="mt-4">
                 <div className="comman-design pb-0 light-list-blue">
                     <div className="d-flex justify-content-between">
                         <div className="d-flex gap-3">
                             <div className="">
                                 <h2 className="comman-heading">Customer's</h2>
-                                <span className="border rounded-pill py-1 px-3">4</span>
+                                <span className="border rounded-pill py-1 px-3">{totalCustomers}</span>
                             </div>
                             <div className="">
                                 <Link to="/customer_add" className="comman-btn">
@@ -146,8 +165,10 @@ const Customer = () => {
                     </div>
                     <div className="comman-design-body">
                         <div className="table-responsive">
-                            {
-                                customerDetails.length > 0 ? (<table className="table table-hover">
+                            {loading ? (
+                                <ShimmerEffect />
+                            ) : customerDetails.length > 0 ? (
+                                <table className="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Sr</th>
@@ -165,8 +186,8 @@ const Customer = () => {
                                     </thead>
                                     <tbody>
                                         {customerDetails.map((customer, index) => (
-                                            <tr key={index}>
-                                                <td>{index + 1}</td>
+                                            <tr key={customer._id}>
+                                                <td>{(currentPage - 1) * pageSize + index + 1}</td>
                                                 <td>
                                                     <div className="d-flex justify-content-center align-items-center">
                                                         <div className="table-user-img">
@@ -190,72 +211,95 @@ const Customer = () => {
                                                         <Link to={`/customer_edit/${customer._id}`} className="table-icon bg-main">
                                                             <i className="fa-solid fa-pencil"></i>
                                                         </Link>
-                                                        <div class="table-icon bg-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
+                                                        <div className="table-icon bg-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
                                                             onClick={() => {
-                                                                setSelectedCustomerId(customer._id);  // Set selected customer ID
-                                                                setIsOpenPopup(true);  // Open the modal
+                                                                setSelectedCustomerId(customer._id)
+                                                                setIsOpenPopup(true)
                                                             }}>
                                                             <i className="fa-solid fa-trash"></i>
                                                         </div>
-
-                                                        {/* delete popup */}
-                                                        {isOpenPopup && (
-                                                            <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
-                                                                aria-hidden="true">
-                                                                <div className="modal-dialog modal-dialog-centered">
-                                                                    <div className="modal-content delete-user-modal">
-                                                                        <div className="modal-header">
-                                                                            <h5 className="modal-title text-white" id="deleteUserModalLabel">
-                                                                                <i className="fa fa-user-circle"></i> {" "}Confirm Delete User
-                                                                            </h5>
-                                                                            <button type="button" className="btn-close text-white bg-white" data-bs-dismiss="modal"
-                                                                                aria-label="Close" id="closeDeleteUserModal" onClick={() => setIsOpenPopup(false)}></button>
-                                                                        </div>
-                                                                        <div className="modal-body text-center">
-                                                                            <div className="delete-icon">
-                                                                                <i className="fa fa-times"></i>
-                                                                            </div>
-                                                                            <p className="mt-3 text-white">Are you sure you want to delete this user?</p>
-                                                                        </div>
-                                                                        <div className="modal-footer">
-                                                                            <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>
-                                                                            <button type="button" className="btn btn-danger" id="confirmDelete" onClick={() => deleteCustomer(selectedCustomerId)}>Delete</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        )}
-
                                                     </div>
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
-                                </table>)
-                                    :
-                                    <ShimmerEffect />
-                            }
+                                </table>
+                            ) : (
+                                <div className="text-center py-4">No customers found</div>
+                            )}
                         </div>
-                        <nav aria-label="...">
-                            <ul class="pagination justify-content-end pt-2">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item ">
-                                    <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
+                        
+                        {totalPages > 1 && (
+                            <nav aria-label="Page navigation">
+                                <ul className="pagination justify-content-end pt-2">
+                                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                        <button 
+                                            className="page-link" 
+                                            onClick={() => handlePageChange(currentPage - 1)}
+                                            disabled={currentPage === 1}
+                                        >
+                                            Previous
+                                        </button>
+                                    </li>
+
+                                    {[...Array(totalPages)].map((_, index) => (
+                                        <li 
+                                            key={index} 
+                                            className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+                                        >
+                                            <button 
+                                                className="page-link" 
+                                                onClick={() => handlePageChange(index + 1)}
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        </li>
+                                    ))}
+
+                                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                        <button 
+                                            className="page-link" 
+                                            onClick={() => handlePageChange(currentPage + 1)}
+                                            disabled={currentPage === totalPages}
+                                        >
+                                            Next
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        )}
+
+                        {isOpenPopup && (
+                            <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
+                                aria-hidden="true">
+                                <div className="modal-dialog modal-dialog-centered">
+                                    <div className="modal-content delete-user-modal">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title text-white" id="deleteUserModalLabel">
+                                                <i className="fa fa-user-circle"></i> Confirm Delete User
+                                            </h5>
+                                            <button type="button" className="btn-close text-white bg-white" data-bs-dismiss="modal"
+                                                aria-label="Close" id="closeDeleteUserModal" onClick={() => setIsOpenPopup(false)}></button>
+                                        </div>
+                                        <div className="modal-body text-center">
+                                            <div className="delete-icon">
+                                                <i className="fa fa-times"></i>
+                                            </div>
+                                            <p className="mt-3 text-white">Are you sure you want to delete this user?</p>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>
+                                            <button type="button" className="btn btn-danger" id="confirmDelete" onClick={() => deleteCustomer(selectedCustomerId)}>Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
         </>
     )
-};
+}
 
 export default Customer
