@@ -1,14 +1,18 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function CustomerEdit() {
     const { id } = useParams();
+    const [masterPassword, setMasterPassword] = useState("")
+    const [picAllowed, setPicAllowed] = useState(true)
     const [customer, setCustomer] = useState({
         user_name: '',
         first_name: '',
         last_name: '',
         email: '',
+        email_confirmed: '',
         country: '',
         state: '',
         city: '',
@@ -16,7 +20,8 @@ function CustomerEdit() {
         pin_code: '',
         newsletter: false,
         country_code: '',
-        address: ''
+        address: '',
+        language: '',
     });
     const [loading, setLoading] = useState(true);
 
@@ -35,9 +40,53 @@ function CustomerEdit() {
     };
 
     // Handle form submission
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const token = localStorage.getItem("token")
         console.log('Updated customer data:', customer);
         // Add your update API call here
+
+        const apiCustomerData = {
+            customerId: customer._id,
+            first_name: customer.first_name,
+            last_name: customer.last_name,
+            user_name: customer.name,
+            city: customer.city,
+            state: customer.state,
+            pin_code: customer.pin_code,
+            address: customer.address,
+            phone_number: customer.phone_number,
+            country_code: customer.country_code,
+            email: customer.email,
+            country: customer.country,
+            language: customer.language,
+            news_letter: customer.newsletter,
+            email_confirmed: customer.email_confirmed,
+            pic_allowed: customer.pic_allowed,
+            master_password: masterPassword
+        };
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/updateCustomer`, apiCustomerData,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-auth-token-user": token,
+                    }
+                }
+            )
+            if (response.data.error === false) {
+                toast.success(response.data.message)
+                console.log(response.data.message)
+                window.location.reload()
+            }
+            else {
+                toast.error(response.data.message)
+                console.log(response.data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+            console.log("catch error:", error.message)
+        }
     };
 
     useEffect(() => {
@@ -74,15 +123,15 @@ function CustomerEdit() {
                         <h2 class="comman-heading">Customer Edit</h2>
                     </div>
                     <div class="comman-design-body">
-                        <form class="form-design">
+                        <form class="form-design" onSubmit={handleSubmit}>
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox"
-                                                id="flexSwitchCheckCheckedDisabled" 
+                                                id="flexSwitchCheckCheckedDisabled"
                                                 name='newsletter' value={customer.newsletter} onChange={handleInputChange}
-                                                />
+                                            />
                                             <label class="form-check-label ms-2"
                                                 for="flexSwitchCheckCheckedDisabled">Newsletter</label>
                                         </div>
@@ -92,7 +141,7 @@ function CustomerEdit() {
                                     <div class="form-group">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox"
-                                                id="flexSwitchCheckCheckedDisabled" checked />
+                                                id="flexSwitchCheckCheckedDisabled" name='email_confirmed' value={customer.email_confirmed} onChange={handleInputChange} />
                                             <label class="form-check-label ms-2"
                                                 for="flexSwitchCheckCheckedDisabled">Email Confirmed</label>
                                         </div>
@@ -113,35 +162,35 @@ function CustomerEdit() {
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">Company Name</label>
-                                        <input type="text" class="form-control" placeholder="Georgeanna forex pvt ltd" />
+                                        <input type="text" class="form-control" placeholder="forex pvt ltd" />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">UserName</label>
-                                        <input type="text" class="form-control" name='user_name' value={customer.user_name} onChange={handleInputChange}/>
+                                        <input type="text" class="form-control" name='user_name' value={customer.user_name} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">Email</label>
-                                        <input type="text" class="form-control" value={customer.email} disabled />
+                                        <input type="text" class="form-control" name='email' value={customer.email} onChange={handleInputChange}/>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">MT Master Passowrd</label>
-                                        <input type="text" class="form-control" placeholder="" />
+                                        <input type="text" class="form-control" placeholder="" name='master_password' value={masterPassword} onChange={(e) => setMasterPassword(e.target.value)}/>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">Address</label>
-                                        <input 
-                                            type="text" 
-                                            className="form-control" 
+                                        <input
+                                            type="text"
+                                            className="form-control"
                                             name="address"
-                                            value={customer.address} 
+                                            value={customer.address}
                                             onChange={handleInputChange}
                                         />
                                     </div>
@@ -149,49 +198,49 @@ function CustomerEdit() {
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">Phone</label>
-                                        <input type="text" class="form-control" disabled value={`${customer.country_code} ${customer.phone_number}`} />
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="" class="form-label">City</label>
-                                        <input type="text" class="form-control" name='city' value={customer.city} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="" class="form-label">State</label>
-                                        <input type="text" class="form-control" name='state' value={customer.state} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="" class="form-label">ZIP</label>
-                                        <input type="text" class="form-control" name='pin_code' value={customer.pin_code} onChange={handleInputChange}/>
+                                        <input type="text" class="form-control" name='phone_number' value={`${customer.phone_number}`} onChange={handleInputChange}/>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">Country</label>
                                         {/* <select name="" id="" class="form-select"></select> */}
-                                        <input type="text" class="form-control" placeholder="" name='country' value={customer.country} onChange={handleInputChange} />
+                                        <input type="text" class="form-control" placeholder="United Kingdom" name='country' value={customer.country} onChange={handleInputChange} />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="" class="form-label">State</label>
+                                        <input type="text" class="form-control" placeholder='London' name='state' value={customer.state} onChange={handleInputChange} />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="" class="form-label">City</label>
+                                        <input type="text" class="form-control" name='city' placeholder='New York' value={customer.city} onChange={handleInputChange} />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="" class="form-label">ZIP</label>
+                                        <input type="text" class="form-control" name='pin_code' placeholder='000-000' value={customer.pin_code} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">Language</label>
-                                        <select name="" id="" class="form-select"></select>
+                                        <input type="text" class="form-control" placeholder="English" name='language' value={customer.language} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="" class="form-label">is Picture Upload Allowed</label>
-                                        <select name="" id="" class="form-select"></select>
+                                        <input type="file" class="form-control" name='pic_allowed' accept='.png, .jpg, .jpeg' />
                                     </div>
                                 </div>
                                 <div class="col-3 mt-3 mx-auto">
                                     <div class="form-group">
-                                        <button class="comman-btn w-100" type='button' onClick={handleSubmit}>Update</button>
+                                        <button class="comman-btn w-100" type='submit'>Update</button>
                                     </div>
                                 </div>
                             </div>

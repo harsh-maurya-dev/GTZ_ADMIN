@@ -47,6 +47,10 @@ const Customer = () => {
     }
 
     const deleteCustomer = async (id) => {
+        // document.getElementById("confirmDelete").setAttribute("disabled", "true");
+        const button = document.getElementById("confirmDelete")
+        button.style.cursor = "not-allowed";
+
         const token = localStorage.getItem("token")
         try {
             const response = await axios.delete(`${import.meta.env.VITE_API_URL}/user/deleteCustomer/${id}`,
@@ -174,7 +178,7 @@ const Customer = () => {
                                                 <td>{customer.email}</td>
                                                 <td>{`(${customer.country_code}) ${customer.phone_number}`}</td>
                                                 <td>{`${customer.first_name} ${customer.last_name}`}</td>
-                                                <td>{customer.newsletter || "No"}</td>
+                                                <td>{customer.news_letter ? "Yes" : "No"}</td>
                                                 <td>{customer.language || "English"}</td>
                                                 <td>{customer.address || "--"}</td>
                                                 <td>{formatDate(customer.createdAt)}</td>
@@ -193,32 +197,8 @@ const Customer = () => {
                                                             }}>
                                                             <i className="fa-solid fa-trash"></i>
                                                         </div>
-                                                        {/* delete popup */}
-                                                        {/* <div class="modal fade " id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
-                                                            aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content delete-user-modal">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title text-white" id="deleteUserModalLabel">
-                                                                            <i class="fa fa-user-circle"></i>
-                                                                            Confirm Delete User's
-                                                                        </h5>
-                                                                        <button type="button" class="btn-close text-white bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <div class="modal-body text-center">
-                                                                        <div class="delete-icon">
-                                                                            <i class="fa fa-times"></i>
-                                                                        </div>
-                                                                        <p class="mt-3 text-white">Are you sure you want to delete this user?</p>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                                                                        <button type="button" class="btn btn-danger" id="confirmDelete" onClick={deleteCustomer(customer._id)}>Delete</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div> */}
 
+                                                        {/* delete popup */}
                                                         {isOpenPopup && (
                                                             <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
                                                                 aria-hidden="true">
