@@ -1,6 +1,127 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import chatbc from "../assets/img/bg-img/ChatBc.webp"
+import { toast } from 'react-toastify';
 
 const PendingUpgrades = () => {
+    const [isOpenReason, setIsOpenReason] = useState(false);
+    const [pendingCustomer, setPendingCustomer] = useState([]);
+    const [reason, setReason] = useState('');
+    const [selectedId, setSelectedId] = useState('');
+    const [loading, setLoading] = useState(true);
+    const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        const fetchPendingUpgrades = async () => {
+            if (!token) {
+                toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const params = {
+                    // page,
+                    // pageSize,
+                    // year, // Only add if selected
+                };
+
+                const response = await axios.patch(
+                    `${import.meta.env.VITE_API_URL}/user/getPendingUpgrades`,
+                    params,
+                    {
+                        headers: {
+                            "accept": "application/json",
+                            "x-auth-token-user": token,
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                    }
+                );
+
+                if (response.data.error === false) {
+                    setPendingCustomer(response.data.results?.customers || []);
+                    // setTotalPages(response.data.results.totalPages || 1)
+                    // setTotalCustomers(response.data.results.totalCustomers || 0)
+                    console.log(response.data.results?.customers);
+                }
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+                setLoading(false);
+                // toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+            }
+        };
+
+        fetchPendingUpgrades();
+    }, [token]);
+
+    const rejectRequest = async(id) => {
+        // Implement reject functionality
+        const status = "Rejected"
+        const formData = {
+            customerId : id,
+            status:status,
+            reason:reason
+        }
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/acceptRejectCustomer`, formData,
+                {
+                    headers: {
+                        "accept": "application/json",
+                        "x-auth-token-user": token,
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    }
+                }
+            )
+            if (response.data.error === false) {
+                console.log(response.data.message);
+                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+                setIsOpenReason(false);
+            } else {
+                console.log(response.data.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleRejectClick = (id) => {
+        setSelectedId(id);
+        setIsOpenReason(true);
+    };
+
+    const renderCustomerRow = (customer, index) => {
+        return (
+            <tr key={customer._id}>
+                <td>{index + 1}</td>
+                <td>{customer.user_name || '-'}</td>
+                <td>{customer.user_type || '-'}</td>
+                <td>-</td>
+                <td>{customer.activeStatus || '-'}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>{`${customer.first_name} ${customer.last_name}`}</td>
+                <td>{customer.email}</td>
+                <td>-</td>
+                <td>{customer.is_verified ? 'Yes' : 'No'}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
+                <td>
+                    <div className="d-flex gap-2 justify-content-center">
+                        <button 
+                            className="btn btn-md btn-danger rounded-circle" 
+                            title="Reject"
+                            onClick={() => handleRejectClick(customer._id)}
+                        >
+                            <i className="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        );
+    };
+
     return (
         <>
             <div className="mt-4">
@@ -9,12 +130,11 @@ const PendingUpgrades = () => {
                         <div className="d-flex gap-3">
                             <div>
                                 <h2 className="comman-heading">Pending Upgrades</h2>
-                                <span className="border rounded-pill py-1 px-3">2</span>
                             </div>
                         </div>
                         <div className="breadcrumb-img-wrapper">
                             <div className="breadcrumb-img">
-                                <img src="assets/img/bg-img/ChatBc.webp" alt="" className="w-100 h-100" />
+                                <img src={chatbc} alt="" className="w-100 h-100" />
                             </div>
                         </div>
                     </div>
@@ -60,6 +180,7 @@ const PendingUpgrades = () => {
                                             <option value="">2022</option>
                                             <option value="">2023</option>
                                             <option value="">2024</option>
+                                            <option value="">2025</option>
                                         </select>
                                     </li>
                                     <li className="dropdown-item">
@@ -106,70 +227,17 @@ const PendingUpgrades = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>101736</td>
-                                                <td>Two Step Assessment <br /> (Phase 2)</td>
-                                                <td>$10.000.00</td>
-                                                <td>Disabled</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>Jhon Doe</td>
-                                                <td>jhon@gmail.com</td>
-                                                <td>None</td>
-                                                <td>Not verified</td>
-                                                <td>0</td>
-                                                <td>60.0%</td>
-                                                <td>20-02-2024 | 08:00 PM</td>
-                                                <td>
-                                                    <div
-                                                        className="d-flex justify-content-center gap-2 align-items-center">
-                                                        {/* <!-- <a href="contract_templete_view.html"
-                                                                    className="table-icon bg-success" title="Upgrade"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#upgradeModal">
-                                                                    <i className="fa-solid fa-check"></i>
-                                                                </a> --> */}
-                                                        <a href="" className="table-icon bg-danger" title="Reject"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#rejectModal">
-                                                            <i className="fa-solid fa-times"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>101736</td>
-                                                <td>Two Step Assessment <br /> (Phase 2)</td>
-                                                <td>$10.000.00</td>
-                                                <td>Disabled</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>Jhon Doe</td>
-                                                <td>jhon@gmail.com</td>
-                                                <td>None</td>
-                                                <td>Not verified</td>
-                                                <td>0</td>
-                                                <td>60.0%</td>
-                                                <td>20-02-2024 | 08:00 PM</td>
-                                                <td>
-                                                    <div
-                                                        className="d-flex justify-content-center gap-2 align-items-center">
-                                                        {/* <!-- <a href="contract_templete_view.html"
-                                                                    className="table-icon bg-success" title="Upgrade"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#upgradeModal">
-                                                                    <i className="fa-solid fa-check"></i>
-                                                                </a> --> */}
-                                                        <a href="" className="table-icon bg-danger" title="Reject"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#rejectModal">
-                                                            <i className="fa-solid fa-times"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="15" className="text-center">Loading...</td>
+                                                </tr>
+                                            ) : pendingCustomer.length > 0 ? (
+                                                pendingCustomer.map((customer, index) => renderCustomerRow(customer, index))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="15" className="text-center">No pending upgrades found</td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -198,7 +266,18 @@ const PendingUpgrades = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="15" className="text-center">Loading...</td>
+                                                </tr>
+                                            ) : pendingCustomer.filter(customer => customer.is_verified).length > 0 ? (
+                                                pendingCustomer.filter(customer => customer.is_verified)
+                                                    .map((customer, index) => renderCustomerRow(customer, index))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="15" className="text-center">No eligible upgrades found</td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -226,38 +305,18 @@ const PendingUpgrades = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>101736</td>
-                                                <td>Two Step Assessment <br /> (Phase 2)</td>
-                                                <td>$10.000.00</td>
-                                                <td>Disabled</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>Jhon Doe</td>
-                                                <td>jhon@gmail.com</td>
-                                                <td>None</td>
-                                                <td>Not verified</td>
-                                                <td>0</td>
-                                                <td>60.0%</td>
-                                                <td>20-02-2024 | 08:00 PM</td>
-                                                <td>
-                                                    <div
-                                                        className="d-flex justify-content-center gap-2 align-items-center">
-                                                        {/* <!-- <a href="contract_templete_view.html"
-                                                                    className="table-icon bg-success" title="Upgrade"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#upgradeModal">
-                                                                    <i className="fa-solid fa-check"></i>
-                                                                </a> --> */}
-                                                        <a href="" className="table-icon bg-danger" title="Reject"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#rejectModal">
-                                                            <i className="fa-solid fa-times"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="15" className="text-center">Loading...</td>
+                                                </tr>
+                                            ) : pendingCustomer.filter(customer => !customer.is_verified).length > 0 ? (
+                                                pendingCustomer.filter(customer => !customer.is_verified)
+                                                    .map((customer, index) => renderCustomerRow(customer, index))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="15" className="text-center">No ineligible upgrades found</td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -266,8 +325,32 @@ const PendingUpgrades = () => {
                     </div>
                 </div>
             </div>
+            {isOpenReason && (
+                <div className="modal fade show" id="rejectModal" tabIndex="-1" aria-labelledby="rejectModalLabel" aria-modal="true" role="dialog" style={{ display: "block", backgroundColor: "#00000075" }}>
+                    <div className="modal-dialog modal-md modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title comman-heading" id="rejectModalLabel">Reject Account Request</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setIsOpenReason(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    rejectRequest(selectedId);
+                                }}>
+                                    <div className="mb-3">
+                                        <label htmlFor="rejectionReason" className="form-label">Reason for Rejection</label>
+                                        <textarea className="form-control h-100" id="rejectionReason" rows="3" placeholder="Enter rejection reason" spellCheck="false" onChange={(e) => setReason(e.target.value)} required></textarea>
+                                    </div>
+                                    <button type="submit" className="comman-btn">Confirm Rejection</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
-    )
-}
+    );
+};
 
-export default PendingUpgrades
+export default PendingUpgrades;

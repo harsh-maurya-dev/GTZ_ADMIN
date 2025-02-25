@@ -18,7 +18,6 @@ const Order = () => {
                         <div className="d-flex gap-3">
                             <div>
                                 <h2 className="comman-heading">Order's</h2>
-                                <span className="border rounded-pill py-1 px-3">4</span>
                             </div>
                         </div>
                         <div className="breadcrumb-img-wrapper">

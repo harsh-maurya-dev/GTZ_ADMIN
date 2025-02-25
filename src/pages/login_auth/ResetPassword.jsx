@@ -114,8 +114,8 @@ function ResetPassword() {
                                                 ></i>
                                             </div>
                                         </div>
-                                        <div class="form-group mt-4">
-                                            <button type='button' class="comman-btn w-100" onClick={resetPassword}>Login</button>
+                                        <div className="form-group mt-4">
+                                            <button type='button' className="comman-btn w-100" onClick={resetPassword}>Login</button>
                                         </div>
                                     </div>
                                 </div>

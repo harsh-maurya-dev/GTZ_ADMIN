@@ -254,6 +254,7 @@
 ::-webkit-scrollbar-thumb {
     background-color: var(--dark-main-color);
     border-radius: 12px;
+    cursor: pointer;
 }
 
 body {
@@ -1156,15 +1157,16 @@ input {
     & tbody {
         & tr {
             vertical-align: middle;
-            cursor: pointer;
+            /* cursor: pointer; */
 
             & td {
                 color: var(--white);
-                font-size: 1rem !important;
+                font-size: 0.9rem !important;
                 font-weight: 500 !important;
                 text-transform: capitalize;
                 text-align: center;
                 background-color: transparent;
+                white-space: nowrap;
             }
         }
     }

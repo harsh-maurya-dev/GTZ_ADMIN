@@ -9,13 +9,13 @@ const Layout = () => {
   // }
   return (
     <>
-      <div class="container-fluid comman-px">
-        <div class="row">
+      <div className="container-fluid comman-px">
+        <div className="row">
           <div className="col-3 sidebar-wrapper">
             <Sidebar />
           </div>
-          <div class="col-9 content-part-wrapper">
-            <div class="content-part">
+          <div className="col-9 content-part-wrapper">
+            <div className="content-part">
               <Header />
               <Outlet />
             </div>
