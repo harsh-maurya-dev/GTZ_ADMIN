@@ -70,7 +70,7 @@ const Sidebar = () => {
                 <div className="sidebar-content">
                     {
                         sidebarLinks.map((value, index) => (
-                            <Link to={value.path} className="" key={index} onClick={() => handleClick(value.path)}>
+                            <Link to={value.path} className={selected === value.path ? "active" : ""} key={index} onClick={() => handleClick(value.path)}>
                                 <span>
                                     <i className={value.icon}></i>
                                 </span>

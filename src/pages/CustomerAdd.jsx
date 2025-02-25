@@ -316,8 +316,8 @@ function CustomerAdd() {
                                             <option value="">Select a Country</option>
                                             {loading ? (
                                                 <option disabled>Loading countries...</option>
-                                            ) : countries.length > 0 ? (
-                                                countries.map((country, index) => (
+                                            ) : countries?.length > 0 ? (
+                                                countries?.map((country, index) => (
                                                     <option key={index} value={country.country}>
                                                         {country.country}
                                                     </option>

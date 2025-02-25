@@ -14,9 +14,9 @@ function OTP() {
         num5: "",
         num6: "",
     });
-    const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)]; // Refs for each input
-    const timerRef = useRef(null)
-    const [expiryTimer, setExpiryTimer] = useState(null)
+    const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+    const [isVisible, setIsVisible] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(30);
 
     const handleChange = (e, index) => {
         const { name, value } = e.target;
@@ -69,38 +69,13 @@ function OTP() {
         }
     };
 
-    function startTimer() {
-        const expiryTime = sessionStorage.getItem("otp_expiry");
-      
-        if (!expiryTime) {
-          console.error("Expiry time not found in sessionStorage");
-          return;
-        }
-      
-        const expiryDate = new Date(expiryTime); // Convert expiry time to Date object
-        const timerInterval = setInterval(() => {
-          const now = new Date(); // Current time
-          const timeLeft = Math.floor((expiryDate - now) / 1000); // Remaining time in seconds
-      
-          if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            console.log("OTP has expired");
-            document.getElementById("otp-timer").innerText = "OTP has expired";
-          } else {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById("otp-timer").innerText = `Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-          }
-        }, 1000); // Update every second
-      }
-
-      const resendOtp = async (e) => {
+    const resendOtp = async (e) => {
         e.preventDefault();
 
         try {
             const email = sessionStorage.getItem("email")
             const userType = "Admin"
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/forgotPassword`, {email, userType}, {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/forgotPassword`, { email, userType }, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -114,6 +89,8 @@ function OTP() {
                 sessionStorage.setItem("otp_expiry", response.data.results.user?.expire_time)
                 console.log("resend otp:", response.data.results?.otp);
                 toast.success(`Resend Otp`, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                setTimeLeft(30); // Restart timer
+                setIsVisible(false);
             } else {
                 toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 console.log(response);
@@ -123,12 +100,16 @@ function OTP() {
             console.error("Failed to resend:", error.response?.data || error.message);
         }
     };
-      
-      // Call this function when the page loads or after fetching the OTP
-      useEffect(()=>{
-          startTimer();
 
-      },[resendOtp])
+    // Call this function when the page loads or after fetching the OTP
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+            return () => clearTimeout(timer);
+        } else {
+            setIsVisible(true);
+        }
+    }, [timeLeft]);
 
 
     return (
@@ -190,10 +171,13 @@ function OTP() {
                                                 Didn't receive the OTP?
                                             </span>
                                             {/* <p className="text-white" ref={timerRef}>{expiryTimer > 0 ? formatTime(expiryTimer) : "Time Expired"}</p> */}
-                                            <div className="text-white" id="otp-timer">Time left: 05:00</div>
+                                            {
+                                                !isVisible ? <div className="text-white" id="otp-timer">Resend: 00:{String(timeLeft).padStart(2, "0")}</div> : null
+                                            }
+
                                             <button
                                                 type="button"
-                                                className="text-decoration-underline text-white bg-transparent ps-1"
+                                                className={!isVisible ? "text-decoration-underline text-white bg-transparent ps-1 d-none" : "text-decoration-underline text-white bg-transparent ps-1 d-block"}
                                                 onClick={resendOtp}
                                             >
                                                 Resend OTP

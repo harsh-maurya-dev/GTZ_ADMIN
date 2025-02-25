@@ -29,16 +29,16 @@ function Login() {
                 console.log("Login Success:", response.data);
                 console.log("Login Success Token:", response.data.results.token);
                 navigate("/dashboard"); // Redirect to private route
-                toast.success(response.data.message, {style:{backgroundColor:"#1a406a", color:"#fff"}});
+                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
             } else {
                 // toast.error("Login failed: Invalid credentials");
-                toast.error(response.data.message, {style:{backgroundColor:"#1a406a", color:"#fff"}});
+                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 console.log(response);
-                
+
             }
         } catch (error) {
             console.error("Login Error:", error.response?.data || error.message);
-            toast.error("Login failed: " + (error.response?.data?.message || error.message), {style:{backgroundColor:"#1a406a", color:"#fff"}});
+            toast.error("Login failed: " + (error.response?.data?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
         }
     };
 
@@ -102,7 +102,7 @@ function Login() {
 
                                     {/* Login Button */}
                                     <div className="form-group">
-                                        <button type="button" className="comman-btn w-100" onClick={fetchUser} na>
+                                        <button type="button" className="comman-btn w-100" onClick={fetchUser}>
                                             Login
                                         </button>
                                     </div>
