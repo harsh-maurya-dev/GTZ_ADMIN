@@ -1,4 +1,4 @@
-import React from 'react'
+import { Link } from "react-router-dom"
 
 function Announcement() {
   return (
@@ -12,10 +12,10 @@ function Announcement() {
                 <span className="border rounded-pill py-1 px-3">4</span>
               </div>
               <div className="">
-                <a href="announcement_Add.html" className="comman-btn">
+                <Link to="/announcement_add" className="comman-btn">
                   <i className="fa-solid fa-plus"></i>
                   Add
-                </a>
+                </Link>
               </div>
             </div>
             <div className="breadcrumb-img-wrapper">
@@ -87,12 +87,12 @@ function Announcement() {
                     <td>En</td>
                     <td>
                       <div className="d-flex justify-content-center gap-2 align-items-center">
-                        <a href="announcement_edit.html" className="table-icon bg-main">
+                        <Link to="/announcement_edit" className="table-icon bg-main">
                           <i className="fa-solid fa-pencil"></i>
-                        </a>
-                        <a href="" className="table-icon bg-danger">
+                        </Link>
+                        <Link to="#" className="table-icon bg-danger">
                           <i className="fa-solid fa-trash"></i>
-                        </a>
+                        </Link>
                       </div>
                     </td>
                   </tr>

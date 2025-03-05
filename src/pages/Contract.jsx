@@ -1,5 +1,5 @@
-import React from 'react'
 import chatbc from "../assets/img/bg-img/ChatBc.webp"
+import { Link } from 'react-router-dom'
 
 const Contract = () => {
     return (
@@ -13,8 +13,8 @@ const Contract = () => {
                                 <span className="border rounded-pill py-1 px-3">4</span>
                             </div>
                             <div>
-                                <a href="contract_templete.html" className="comman-btn">Contract Templete
-                                    Magnet.</a>
+                                <Link to="/contract_templete" className="comman-btn">Contract Templete
+                                    Magnet.</Link>
                             </div>
                         </div>
                         <div className="breadcrumb-img-wrapper">
@@ -123,35 +123,10 @@ const Contract = () => {
                                                 <td>
                                                     <div
                                                         className="d-flex justify-content-center gap-2 align-items-center">
-                                                        <a href="contract_view.html"
+                                                        <Link to="/contract_view"
                                                             className="table-icon bg-success">
                                                             <i className="fa-solid fa-desktop"></i>
-                                                        </a>
-                                                        <a href="#" className="table-icon bg-main">
-                                                            <i className="fa-solid fa-download"></i>
-                                                        </a>
-                                                        <a href="" className="table-icon bg-danger">
-                                                            <i className="fa-solid fa-trash"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>C12023</td>
-                                                <td>558591</td>
-                                                <td>jhon Doe</td>
-                                                <td>Affiliate</td>
-                                                <td>
-                                                    <div className="badge bg-warning">Pending</div>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        className="d-flex justify-content-center gap-2 align-items-center">
-                                                        <a href="contract_view.html"
-                                                            className="table-icon bg-success">
-                                                            <i className="fa-solid fa-desktop"></i>
-                                                        </a>
+                                                        </Link>
                                                         <a href="#" className="table-icon bg-main">
                                                             <i className="fa-solid fa-download"></i>
                                                         </a>

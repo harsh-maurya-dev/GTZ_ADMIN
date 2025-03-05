@@ -1,4 +1,4 @@
-import React from 'react'
+import { Link } from 'react-router-dom'
 
 function PlansManagement() {
     return (
@@ -12,16 +12,16 @@ function PlansManagement() {
                                 <span className="border rounded-pill py-1 px-3">3</span>
                             </div>
                             <div>
-                                <a href="plans_Add.html" className="comman-btn">
+                                <Link to="/plans_management_add" className="comman-btn">
                                     <i className="fa-solid fa-plus pe-2"></i>
                                     Add
-                                </a>
+                                </Link>
                             </div>
                             <div>
-                                <a href="competitions.html" className="comman-btn">
+                                <Link to="/competitions" className="comman-btn">
                                     <i className="fa-solid fa-arrow-left pe-2"></i>
                                     Go To Competition Management
-                                </a>
+                                </Link>
                             </div>
                         </div>
                         <div className="breadcrumb-img-wrapper">
@@ -135,57 +135,15 @@ function PlansManagement() {
                                                 <td>2:200</td>
                                                 <td>
                                                     <div className="d-flex gap-3 justify-content-center">
-                                                        <a href="plans_View.html" className="table-icon bg-success">
+                                                        <Link to="/plans_management_view" className="table-icon bg-success">
                                                             <i className="fa-solid fa-desktop"></i>
-                                                        </a>
-                                                        <a href="plans_edit.html" className="table-icon bg-main">
+                                                        </Link>
+                                                        <Link to="/plans_management_edit" className="table-icon bg-main">
                                                             <i className="fa-solid fa-pencil"></i>
-                                                        </a>
-                                                        <a href="" className="table-icon bg-danger">
+                                                        </Link>
+                                                        <Link to="#" className="table-icon bg-danger">
                                                             <i className="fa-solid fa-trash"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>0909</td>
-                                                <td>Pro Plan</td>
-                                                <td>Group A</td>
-                                                <td>2123</td>
-                                                <td>2:200</td>
-                                                <td>
-                                                    <div className="d-flex gap-3 justify-content-center">
-                                                        <a href="plans_View.html" className="table-icon bg-success">
-                                                            <i className="fa-solid fa-desktop"></i>
-                                                        </a>
-                                                        <a href="plans_edit.html" className="table-icon bg-main">
-                                                            <i className="fa-solid fa-pencil"></i>
-                                                        </a>
-                                                        <a href="" className="table-icon bg-danger">
-                                                            <i className="fa-solid fa-trash"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>0909</td>
-                                                <td>Advance Plan</td>
-                                                <td>Group B</td>
-                                                <td>2123</td>
-                                                <td>2:200</td>
-                                                <td>
-                                                    <div className="d-flex gap-3 justify-content-center">
-                                                        <a href="plans_View.html" className="table-icon bg-success">
-                                                            <i className="fa-solid fa-desktop"></i>
-                                                        </a>
-                                                        <a href="plans_edit.html" className="table-icon bg-main">
-                                                            <i className="fa-solid fa-pencil"></i>
-                                                        </a>
-                                                        <a href="" className="table-icon bg-danger">
-                                                            <i className="fa-solid fa-trash"></i>
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </td>
                                             </tr>

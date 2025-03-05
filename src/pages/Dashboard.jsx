@@ -1,11 +1,13 @@
-import React from 'react'
-import user2 from "../assets/img/user/user2.jpg"
-import user3 from "../assets/img/user/user3.jpg"
+import { useEffect, useState } from 'react'
 import user4 from "../assets/img/user/user4.jpg"
 import welcome from "../assets/img/bg-img/welcome-bg.webp"
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const Dashboard = () => {
+    const [customerDetails, setCustomerDetails] = useState([])
+    const [loading, setLoading] = useState(false)
 
     const data = [
         { month: 'Aug', value1: 59, value2: 19 },
@@ -88,6 +90,44 @@ const Dashboard = () => {
             "amt": 2100
         }
     ]
+
+    const fetchRecentCustomer = async () => {
+        setLoading(true)
+        const token = localStorage.getItem("token")
+        if (!token) {
+            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } })
+            setLoading(false)
+            return
+        }
+
+        try {
+            const response = await axios.patch(
+                `${import.meta.env.VITE_API_URL}/user/getCustomerList`,
+                {},
+                {
+                    headers: {
+                        "accept": "application/json",
+                        "x-auth-token-user": token,
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                }
+            )
+
+            if (response.data.error === false) {
+                setCustomerDetails(response.data.results.customers)
+                // setTotalPages(response.data.results.totalPages || 1)
+                // setTotalCustomers(response.data.results.totalCustomers || 0)
+            }
+        } catch (error) {
+            toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchRecentCustomer()
+    }, [])
 
     return (
         <>
@@ -277,7 +317,7 @@ const Dashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        {/* <tr>
                                             <td>
                                                 <div className="d-flex gap-2 align-items-center">
                                                     <div className="table-img">
@@ -332,7 +372,32 @@ const Dashboard = () => {
                                             <td>
                                                 <div className="badge text-danger bg-light-danger">InActive</div>
                                             </td>
-                                        </tr>
+                                        </tr> */}
+
+                                        {
+                                            loading ? (<p>Loading Data...</p>) :
+                                                (
+                                                    customerDetails.map((customer, index) => {
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>
+                                                                    <div className="d-flex gap-2 align-items-center">
+                                                                        <div className="table-img">
+                                                                            <img src={user4} alt="" />
+                                                                        </div>
+                                                                        <span>{customer?.name}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>${ customer?.income || "200"}</td>
+                                                                <td>
+                                                                    <div className={customer?.status ? "badge bg-light-success text-success" : " text-danger bg-light-danger"}>{ customer?.status ? "Active": "InActive"}</div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+
+                                                    })
+                                                )
+                                        }
                                     </tbody>
                                 </table>
                             </div>

@@ -1,5 +1,5 @@
-import React from 'react'
 import chatbc from "../assets/img/bg-img/ChatBc.webp"
+import { Link } from 'react-router-dom'
 
 function RiskTriggers() {
     return (
@@ -12,14 +12,14 @@ function RiskTriggers() {
                                 <h2 className="comman-heading">Risk Triggers</h2>
                             </div>
                             <div>
-                                <a href="risk_triggers_add.html" className="comman-btn">
+                                <Link to="/risk_triggers_add" className="comman-btn">
                                     <i className="fa-solid fa-plus pe-2"></i>
                                     Add
-                                </a>
+                                </Link>
                             </div>
-                            <a className="risk-notification" href="risk_notification.html">
+                            <Link className="risk-notification" to="/risk_notification">
                                 <i className="fa-solid fa-bell"></i>
-                            </a>
+                            </Link>
                         </div>
 
                         <div className="breadcrumb-img-wrapper">
@@ -135,14 +135,14 @@ function RiskTriggers() {
                                                 <td>
                                                     <div
                                                         className="d-flex justify-content-center gap-2 align-items-center">
-                                                        <a href="risk_triggers_view.html"
+                                                        <Link to="/risk_triggers_view"
                                                             className="table-icon bg-success">
                                                             <i className="fa-solid fa-desktop"></i>
-                                                        </a>
-                                                        <a href="risk_triggers_edit.html"
+                                                        </Link>
+                                                        <Link to="/risk_triggers_edit"
                                                             className="table-icon bg-main">
                                                             <i className="fa-solid fa-pencil"></i>
-                                                        </a>
+                                                        </Link>
                                                         <a href="" className="table-icon bg-danger">
                                                             <i className="fa-solid fa-trash"></i>
                                                         </a>

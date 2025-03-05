@@ -68,7 +68,7 @@ const Header = () => {
                 <div className="d-flex justify-content-end align-items-center h-100">
                     <div className={" change-color"} onClick={() => setIsOpen(!isOpen)}>
                         <div className={`change-color-item light-blue-white-color main-display`}></div>
-                        <div class="change-color-dropdown">
+                        <div className="change-color-dropdown">
                             {themes.map((theme, index) => (
                                 <div className="d-flex justify-content-between gap-1" key={index}>
                                     <div className={`change-color-item ${theme.value}`}></div>

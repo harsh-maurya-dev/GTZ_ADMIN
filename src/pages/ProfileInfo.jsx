@@ -122,7 +122,7 @@ function ProfileInfo() {
   useEffect(() => {
     // dispatch(profileDataApi())
     fetchProfileData();
-  }, [editProfile]);
+  }, []);
 
   return (
     <>
