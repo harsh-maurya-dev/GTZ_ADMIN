@@ -38,6 +38,45 @@ import ChallengeAdd from './pages/ChallengeAdd';
 import ChallengeEdit from './pages/ChallengeEdit';
 import CustomerView from './pages/CustomerView';
 import CustomerEdit from './pages/CustomerEdit';
+import ChallengeView from './pages/ChallengeView';
+import ContractTemplate from './pages/ContractTemplate';
+import ContractTempleteAdd from './pages/ContractTempleteAdd';
+import ContractTempleteEdit from './pages/ContractTempleteEdit';
+import ContractView from './pages/ContractView';
+import RiskTriggersAdd from './pages/RiskTriggersAdd';
+import RiskTriggersView from './pages/RiskTriggersView';
+import RiskTriggersEdit from './pages/RiskTriggersEdit';
+import RiskNotification from './pages/RiskNotification';
+import PropAccountView from './pages/PropAccountView';
+import PropAccountEdit from './pages/PropAccountEdit';
+import PlanManagementAdd from './pages/PlanManagementAdd';
+import PlanManagementEdit from './pages/PlanManagementEdit';
+import PlanManagementView from './pages/PlanManagementView';
+import Competitions from './pages/Competitions';
+import CompetitionAdd from './pages/CompetitionAdd';
+import CompetitionsView from './pages/CompetitionsView';
+import CompetitionsEdit from './pages/CompetitionsEdit';
+import ReportsManagementAdd from './pages/ReportsManagementAdd';
+import ReportsManagementEdit from './pages/ReportsManagementEdit';
+import ReportsManagementView from './pages/ReportsManagementView';
+import ContentManagementAdd from './pages/ContentManagementAdd';
+import ContentManagementEdit from './pages/ContentManagementEdit';
+import ContentManagementView from './pages/ContentManagementView';
+import FAQEdit from './pages/FAQEdit';
+import FAQAdd from './pages/FAQAdd';
+import FAQView from './pages/FAQView';
+import DownloadAdd from './pages/DownloadAdd';
+import DownloadEdit from './pages/DownloadEdit';
+import VideoManagementAdd from './pages/VideoManagementAdd';
+import VideoManagementEdit from './pages/VideoManagementEdit';
+import VideoManagementView from './pages/VideoManagementView';
+import UserManagementAdd from './pages/UserManagementAdd';
+import UserManagementEdit from './pages/UserManagementEdit';
+import AnnouncementAdd from './pages/AnnouncementAdd';
+import AnnouncementEdit from './pages/AnnouncementEdit';
+import DiscountCodesGlobalView from './pages/DiscountCodesGlobalView';
+import DiscountCodesGlobalEdit from './pages/DiscountCodesGlobalEdit';
+import DiscountCodesGlobalAdd from './pages/DiscountCodesGlobalAdd';
 
 function App() {
   return (
@@ -55,6 +94,10 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Layout />}>
             <Route path="/dashboard" element={<Dashboards />} />
+            <Route path="/competitions" element={<Competitions />} />
+            <Route path="/competitions_add" element={<CompetitionAdd />} />
+            <Route path="/competitions_view" element={<CompetitionsView />} />
+            <Route path="/competitions_edit" element={<CompetitionsEdit />} />
             <Route path="/customers_management" element={<Customer />} />
             <Route path="/customers_view/:id" element={<CustomerView />} />
             <Route path="/customer_add" element={<CustomerAdd />} />
@@ -63,24 +106,60 @@ function App() {
             <Route path="/challenge_management" element={<Challenge />} />
             <Route path="/challenge_add" element={<ChallengeAdd />} />
             <Route path="/challenge_edit/:id" element={<ChallengeEdit />} />
+            <Route path="/challenge_view/:id" element={<ChallengeView />} />
             <Route path="/orders_management" element={<Order />} />
             <Route path="/contract_management" element={<Contract />} />
+            <Route path="/contract_view" element={<ContractView />} />
+            <Route path="/contract_templete" element={<ContractTemplate />} />
+            <Route path="/contract_templete_add" element={<ContractTempleteAdd />} />
+            <Route path="/contract_templete_edit" element={<ContractTempleteEdit />} />
             <Route path="/pending_upgrades" element={<PendingUpgrades />} />
             <Route path="/risk_triggers" element={<RiskTriggers />} />
+            <Route path="/risk_triggers_add" element={<RiskTriggersAdd />} />
+            <Route path="/risk_triggers_view" element={<RiskTriggersView />} />
+            <Route path="/risk_triggers_edit" element={<RiskTriggersEdit />} />
+            <Route path="/risk_notification" element={<RiskNotification />} />
             <Route path="/affiliates_management" element={<Affiliates />} />
             <Route path="/affiliate_payout_management" element={<AffiliatePayout />} />
             <Route path="/plans_management" element={<PlansManagement />} />
+            <Route path="/plans_management_add" element={<PlanManagementAdd />} />
+            <Route path="/plans_management_edit" element={<PlanManagementEdit />} />
+            <Route path="/plans_management_view" element={<PlanManagementView />} />
             <Route path="/prop_account_management" element={<PropAccount />} />
+            <Route path="/prop_account_view" element={<PropAccountView />} />
+            <Route path="/prop_account_edit" element={<PropAccountEdit />} />
             <Route path="/prop_payout_management" element={<PropPayout />} />
             <Route path="/reports_management" element={<ReportManagement />} />
+            <Route path="/reports_management_add" element={<ReportsManagementAdd />} />
+            <Route path="/reports_management_edit" element={<ReportsManagementEdit />} />
+            <Route path="/reports_management_view" element={<ReportsManagementView />} />
             <Route path="/content_management" element={<ContentManagement />} />
+            <Route path="/content_management_add" element={<ContentManagementAdd />} />
+            <Route path="/content_management_edit" element={<ContentManagementEdit />} />
+            <Route path="/content_management_view" element={<ContentManagementView />} />
             <Route path="/FAQ_management" element={<FAQ />} />
+            <Route path="/FAQ_management_add" element={<FAQAdd />} />
+            <Route path="/FAQ_management_edit" element={<FAQEdit />} />
+            <Route path="/FAQ_management_view" element={<FAQView />} />
             <Route path="/download_management" element={<Download />} />
+            <Route path="/download_management_add" element={<DownloadAdd />} />
+            <Route path="/download_management_edit" element={<DownloadEdit />} />
             <Route path="/video_management" element={<VideoManagement />} />
+            <Route path="/video_management_add" element={<VideoManagementAdd />} />
+            <Route path="/video_management_edit" element={<VideoManagementEdit />} />
+            <Route path="/video_management_view" element={<VideoManagementView />} />
             <Route path="/image_management" element={<ImageManagement />} />
             <Route path="/users_management" element={<UserManagement />} />
+            <Route path="/users_management_add" element={<UserManagementAdd />} />
+            <Route path="/users_management_edit" element={<UserManagementEdit />} />
             <Route path="/announcement" element={<Announcement />} />
+            <Route path="/announcement_add" element={<AnnouncementAdd />} />
+            <Route path="/announcement_edit" element={<AnnouncementEdit />} />
             <Route path="/discount_codes_management" element={<DiscountCodes />} />
+            <Route path="/discount_codes_management_global_add" element={<DiscountCodesGlobalAdd />} />
+            <Route path="/discount_codes_management_global_view" element={<DiscountCodesGlobalView />} />
+            <Route path="/discount_codes_management_global_edit" element={<DiscountCodesGlobalEdit />} />
+            <Route path="/discount_codes_management_breach_view" element={<DiscountCodes />} />
             <Route path="/email_management" element={<EmailManagement />} />
 
             {/* Profile Routes */}

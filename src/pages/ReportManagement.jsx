@@ -1,4 +1,4 @@
-import React from 'react'
+import { Link } from 'react-router-dom'
 
 const ReportManagement = () => {
     return (
@@ -12,10 +12,10 @@ const ReportManagement = () => {
                                 <span className="border rounded-pill py-1 px-3">2</span>
                             </div>
                             <div>
-                                <a href="Reports_add.html" className="comman-btn">
+                                <Link to="/reports_management_add" className="comman-btn">
                                     <i className="fa-solid fa-plus pe-2"></i>
                                     Add
-                                </a>
+                                </Link>
                             </div>
                         </div>
                         <div className="breadcrumb-img-wrapper">
@@ -87,75 +87,15 @@ const ReportManagement = () => {
                                         <td>2024-04-15</td>
                                         <td>
                                             <div className="d-flex gap-3 justify-content-center">
-                                                <a href="Reports_View.html" className="table-icon bg-success">
+                                                <Link to="/reports_management_view" className="table-icon bg-success">
                                                     <i className="fa-solid fa-desktop"></i>
-                                                </a>
-                                                <a href="Reports_edit.html" className="table-icon bg-main">
+                                                </Link>
+                                                <Link to="/reports_management_edit" className="table-icon bg-main">
                                                     <i className="fa-solid fa-pencil"></i>
-                                                </a>
-                                                <a href="" className="table-icon bg-danger">
+                                                </Link>
+                                                <Link to="#" className="table-icon bg-danger">
                                                     <i className="fa-solid fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>MATCHTRADER</td>
-                                        <td>40</td>
-                                        <td>$249.00</td>
-                                        <td>2024-04-15</td>
-                                        <td>
-                                            <div className="d-flex gap-3 justify-content-center">
-                                                <a href="Reports_View.html" className="table-icon bg-success">
-                                                    <i className="fa-solid fa-desktop"></i>
-                                                </a>
-                                                <a href="Reports_edit.html" className="table-icon bg-main">
-                                                    <i className="fa-solid fa-pencil"></i>
-                                                </a>
-                                                <a href="" className="table-icon bg-danger">
-                                                    <i className="fa-solid fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>DX TRADER</td>
-                                        <td>30</td>
-                                        <td>$200.00</td>
-                                        <td>2024-04-15</td>
-                                        <td>
-                                            <div className="d-flex gap-3 justify-content-center">
-                                                <a href="Reports_View.html" className="table-icon bg-success">
-                                                    <i className="fa-solid fa-desktop"></i>
-                                                </a>
-                                                <a href="Reports_edit.html" className="table-icon bg-main">
-                                                    <i className="fa-solid fa-pencil"></i>
-                                                </a>
-                                                <a href="" className="table-icon bg-danger">
-                                                    <i className="fa-solid fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td>MetaTrader 5</td>
-                                        <td>10</td>
-                                        <td>$100.00</td>
-                                        <td>2024-04-15</td>
-                                        <td>
-                                            <div className="d-flex gap-3 justify-content-center">
-                                                <a href="Reports_View.html" className="table-icon bg-success">
-                                                    <i className="fa-solid fa-desktop"></i>
-                                                </a>
-                                                <a href="Reports_edit.html" className="table-icon bg-main">
-                                                    <i className="fa-solid fa-pencil"></i>
-                                                </a>
-                                                <a href="" className="table-icon bg-danger">
-                                                    <i className="fa-solid fa-trash"></i>
-                                                </a>
+                                                </Link>
                                             </div>
                                         </td>
                                     </tr>

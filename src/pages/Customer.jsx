@@ -99,7 +99,7 @@ const Customer = () => {
     useEffect(() => {
         fetchCustomer(currentPage);
     }, [currentPage, pageSize, year]);
-    
+
     useEffect(() => {
         setSearchParam({ page: currentPage, pageSize });
     }, [currentPage, pageSize, setSearchParam]);
@@ -237,7 +237,8 @@ const Customer = () => {
                                 <div className="text-center py-4">No customers found</div>
                             )}
                         </div>
-
+                        
+                        {/* pagination */}
                         {totalPages > 1 && (
                             <nav aria-label="Page navigation">
                                 <ul className="pagination justify-content-end pt-2">
@@ -278,6 +279,7 @@ const Customer = () => {
                             </nav>
                         )}
 
+                        {/* delete popup close & open */}
                         {isOpenPopup && (
                             <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
                                 aria-hidden="true" style={{ backgroundColor: "#00000075" }}>
@@ -285,7 +287,7 @@ const Customer = () => {
                                     <div className="modal-content delete-user-modal">
                                         <div className="modal-header">
                                             <h5 className="modal-title text-white" id="deleteUserModalLabel">
-                                                <i className="fa fa-user-circle"></i> Confirm Delete User
+                                                <i className="fa fa-user-circle"></i> Confirm Delete Customer
                                             </h5>
                                             <button type="button" className="btn-close text-white bg-white" data-bs-dismiss="modal"
                                                 aria-label="Close" id="closeDeleteUserModal" onClick={() => setIsOpenPopup(false)}></button>
@@ -294,7 +296,7 @@ const Customer = () => {
                                             <div className="delete-icon">
                                                 <i className="fa fa-times"></i>
                                             </div>
-                                            <p className="mt-3 text-white">Are you sure you want to delete this user?</p>
+                                            <p className="mt-3 text-white">Are you sure you want to delete this Customer?</p>
                                         </div>
                                         <div className="modal-footer">
                                             <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>

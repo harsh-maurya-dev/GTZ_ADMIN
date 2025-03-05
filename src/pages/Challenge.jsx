@@ -1,13 +1,62 @@
-import React from 'react'
-import challenge_image from "../assets/img/bg-img/ChatBc.webp"
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import challenge_image from "../assets/img/bg-img/ChatBc.webp";
+import { Link, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const Challenge = () => {
-    const challenges = [
-        { id: 1, name: "Advanced", passed: 10, failed: 5, status: "Active" },
-        { id: 2, name: "Expert", passed: 20, failed: 1, status: "InActive" },
-        { id: 3, name: "Instant Funding", passed: 12, failed: 8, status: "Active" },
-    ];
+    const [challenges, setChallenges] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    // const [totalChallenge, setTotalChallenge] = useState(0)
+    const [searchParams, setSearchParam] = useSearchParams()
+    const [pageSize, setPageSize] = useState(5)
+    const [year, setYear] = useState(2025)
+
+    const fetchChallenges = async (page) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
+            return;
+        }
+        try {
+            const params = {
+                page,
+                pageSize,
+                year, // Only add if selected
+            };
+            const response = await axios.patch(
+                `${import.meta.env.VITE_API_URL}/trading/getChallenges`,
+                params,
+                {
+                    headers: {
+                        "accept": "application/json",
+                        "x-auth-token-user": token,
+                    },
+                }
+            );
+            setChallenges(response.data.results?.challenges || []);
+            setTotalPages(response.data.results.totalPages || 1)
+            // setTotalChallenge(response.data.results.total || 0)
+        } catch (error) {
+            console.error("Error fetching challenges:", error);
+        }
+    };
+
+    const handlePageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage)
+        }
+    }
+
+    useEffect(() => {
+        fetchChallenges(currentPage);
+    }, [currentPage, pageSize, year]);
+
+    useEffect(() => {
+        setSearchParam({ page: currentPage, pageSize });
+    }, [currentPage, pageSize, setSearchParam]);
+
     return (
         <>
             <div className="mt-4">
@@ -16,10 +65,10 @@ const Challenge = () => {
                         <div className="d-flex gap-3">
                             <div>
                                 <h2 className="comman-heading">Challenge</h2>
-                                <span className="border rounded-pill py-1 px-3">4</span>
+                                {/* <span className="border rounded-pill py-1 px-3">{challenges.length}</span> */}
                             </div>
                             <div>
-                                <Link to="challenge_add" className="comman-btn">
+                                <Link to="/challenge_add" className="comman-btn">
                                     <i className="fa-solid fa-plus"></i>
                                     Add
                                 </Link>
@@ -46,26 +95,27 @@ const Challenge = () => {
                                 <ul className="dropdown-menu">
                                     <li className="dropdown-item">
                                         <label className="form-label">Year</label>
-                                        <select className="form-select">
-                                            <option value="">2020</option>
-                                            <option value="">2021</option>
-                                            <option value="">2022</option>
-                                            <option value="">2023</option>
-                                            <option value="">2024</option>
+                                        <select className="form-select" value={year} onChange={(e) => setYear(parseInt(e.target.value))}>
+                                            <option value={2020}>2020</option>
+                                            <option value={2021}>2021</option>
+                                            <option value={2022}>2022</option>
+                                            <option value={2023}>2023</option>
+                                            <option value={2024}>2024</option>
+                                            <option value={2025}>2025</option>
                                         </select>
                                     </li>
                                     <li className="dropdown-item">
                                         <label className="form-label">Show List</label>
-                                        <select className="form-select">
-                                            <option value="">05</option>
-                                            <option value="">10</option>
-                                            <option value="">15</option>
-                                            <option value="">20</option>
-                                            <option value="">25</option>
-                                            <option value="">30</option>
-                                            <option value="">35</option>
-                                            <option value="">40</option>
-                                            <option value="">45</option>
+                                        <select className="form-select" value={pageSize} onChange={(e) => setPageSize(parseInt(e.target.value, 10))}>
+                                            <option value={5}>05</option>
+                                            <option value={10}>10</option>
+                                            <option value={15}>15</option>
+                                            <option value={20}>20</option>
+                                            <option value={25}>25</option>
+                                            <option value={30}>30</option>
+                                            <option value={35}>35</option>
+                                            <option value={40}>40</option>
+                                            <option value={45}>45</option>
                                         </select>
                                     </li>
                                 </ul>
@@ -74,7 +124,7 @@ const Challenge = () => {
                     </div>
                     <div className="comman-design-body">
                         <div className="table-responsive">
-                        <table className="table table-hover">
+                            <table className="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Sr</th>
@@ -93,22 +143,22 @@ const Challenge = () => {
                                 </thead>
                                 <tbody>
                                     {challenges.map((challenge, index) => (
-                                        <tr key={challenge.id}>
-                                            <td>{index + 1}</td>
-                                            <td>{challenge.name}</td>
-                                            <td>{challenge.passed}</td>
-                                            <td>{challenge.failed}</td>
+                                        <tr key={challenge._id}>
+                                            <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                                            <td>{challenge.phases[0]?.name}</td>
+                                            <td>{challenge.passed || 0}</td>
+                                            <td>{challenge.failed || 0}</td>
                                             <td>
-                                                <div className={`badge ${challenge.status === "Active" ? "bg-light-success text-success" : "bg-light-danger text-danger"}`}>
-                                                    {challenge.status}
+                                                <div className={`badge ${challenge.status ? "bg-light-success text-success" : "bg-light-danger text-danger"}`}>
+                                                    {challenge.status ? "Active" : "InActive"}
                                                 </div>
                                             </td>
                                             <td>
                                                 <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                    <a href="Challenge_view.html" className="table-icon bg-success">
+                                                    <Link to={`/challenge_view/${challenge._id}`} className="table-icon bg-success">
                                                         <i className="fa-solid fa-desktop"></i>
-                                                    </a>
-                                                    <Link to={`/challenge_edit/${index}`} className="table-icon bg-main" >
+                                                    </Link>
+                                                    <Link to={`/challenge_edit/${challenge._id}`} className="table-icon bg-main" >
                                                         <i className="fa-solid fa-pencil"></i>
                                                     </Link>
                                                     <a href="#" className="table-icon bg-danger">
@@ -120,12 +170,53 @@ const Challenge = () => {
                                     ))}
                                 </tbody>
                             </table>
+
+                            {/* pagination */}
+                            {totalPages > 1 && (
+                                <nav aria-label="Page navigation">
+                                    <ul className="pagination justify-content-end pt-2">
+                                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                            <button
+                                                className="page-link"
+                                                onClick={() => handlePageChange(currentPage - 1)}
+                                                disabled={currentPage === 1}
+                                            >
+                                                Previous
+                                            </button>
+                                        </li>
+
+                                        {[...Array(totalPages)].map((_, index) => (
+                                            <li
+                                                key={index}
+                                                className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+                                            >
+                                                <button
+                                                    className="page-link"
+                                                    onClick={() => handlePageChange(index + 1)}
+                                                >
+                                                    {index + 1}
+                                                </button>
+                                            </li>
+                                        ))}
+
+                                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                            <button
+                                                className="page-link"
+                                                onClick={() => handlePageChange(currentPage + 1)}
+                                                disabled={currentPage === totalPages}
+                                            >
+                                                Next
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default Challenge
+export default Challenge;

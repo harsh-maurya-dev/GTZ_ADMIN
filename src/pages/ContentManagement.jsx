@@ -1,4 +1,4 @@
-import React from 'react'
+import { Link } from 'react-router-dom'
 
 function ContentManagement() {
   return (
@@ -12,10 +12,10 @@ function ContentManagement() {
                                         <span className="border rounded-pill py-1 px-3">2</span>
                                     </div>
                                     <div>
-                                        <a href="content_add.html" className="comman-btn">
+                                        <Link to="/content_management_add" className="comman-btn">
                                             <i className="fa-solid fa-plus pe-2"></i>
                                             Add
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="breadcrumb-img-wrapper">
@@ -85,34 +85,15 @@ function ContentManagement() {
                                                 <td>2024-04-15</td>
                                                 <td>
                                                     <div className="d-flex gap-3 justify-content-center">
-                                                        <a href="content_view.html" className="table-icon bg-success">
+                                                        <Link to="/content_management_view" className="table-icon bg-success">
                                                             <i className="fa-solid fa-desktop"></i>
-                                                        </a>
-                                                        <a href="content_edit.html" className="table-icon bg-main">
+                                                        </Link>
+                                                        <Link to="/content_management_edit" className="table-icon bg-main">
                                                             <i className="fa-solid fa-pencil"></i>
-                                                        </a>
-                                                        <a href="" className="table-icon bg-danger">
+                                                        </Link>
+                                                        <Link to="#" className="table-icon bg-danger">
                                                             <i className="fa-solid fa-trash"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Contact Us</td>
-                                                <td>Published</td>
-                                                <td>2024-04-15</td>
-                                                <td>
-                                                    <div className="d-flex gap-3 justify-content-center">
-                                                        <a href="content_view.html" className="table-icon bg-success">
-                                                            <i className="fa-solid fa-desktop"></i>
-                                                        </a>
-                                                        <a href="content_edit.html" className="table-icon bg-main">
-                                                            <i className="fa-solid fa-pencil"></i>
-                                                        </a>
-                                                        <a href="" className="table-icon bg-danger">
-                                                            <i className="fa-solid fa-trash"></i>
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </td>
                                             </tr>
