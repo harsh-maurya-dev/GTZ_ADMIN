@@ -317,73 +317,17 @@ const Dashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* <tr>
-                                            <td>
-                                                <div className="d-flex gap-2 align-items-center">
-                                                    <div className="table-img">
-                                                        <img src={user4} alt="" />
-                                                    </div>
-                                                    <span>June R. Smith</span>
-                                                </div>
-                                            </td>
-                                            <td>$19.00</td>
-                                            <td>
-                                                <div className="badge text-success bg-light-success">Active</div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div className="d-flex gap-2 align-items-center">
-                                                    <div className="table-img">
-                                                        <img src={user3} alt="" />
-                                                    </div>
-                                                    <span>Arya H. Shah</span>
-                                                </div>
-                                            </td>
-                                            <td>$19.00</td>
-                                            <td>
-                                                <div className="badge text-success bg-light-success">Active</div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div className="d-flex gap-2 align-items-center">
-                                                    <div className="table-img">
-                                                        <img src={user2} alt="" />
-                                                    </div>
-                                                    <span>Nina R. Oldman</span>
-                                                </div>
-                                            </td>
-                                            <td>$19.00</td>
-                                            <td>
-                                                <div className="badge text-danger bg-light-danger">InActive</div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div className="d-flex gap-2 align-items-center">
-                                                    <div className="table-img">
-                                                        <img src={user4} alt="" />
-                                                    </div>
-                                                    <span>Mark J. Freeman</span>
-                                                </div>
-                                            </td>
-                                            <td>$19.00</td>
-                                            <td>
-                                                <div className="badge text-danger bg-light-danger">InActive</div>
-                                            </td>
-                                        </tr> */}
 
                                         {
                                             loading ? (<p>Loading Data...</p>) :
                                                 (
-                                                    customerDetails.map((customer, index) => {
+                                                    customerDetails.slice(0,5).map((customer, index) => {
                                                         return (
                                                             <tr key={index}>
                                                                 <td>
                                                                     <div className="d-flex gap-2 align-items-center">
                                                                         <div className="table-img">
-                                                                            <img src={user4} alt="" />
+                                                                            <img src={customer?.profile_image || user4} alt="" />
                                                                         </div>
                                                                         <span>{customer?.name}</span>
                                                                     </div>

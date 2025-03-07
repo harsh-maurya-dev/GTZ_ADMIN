@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import customer_image from "../assets/img/bg-img/ChatBc.webp"
 import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect'
 import { Link, useSearchParams } from 'react-router-dom'
+import customerImg from "../assets/img/user/user4.jpg"
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
@@ -195,34 +196,34 @@ const Customer = () => {
                                     </thead>
                                     <tbody>
                                         {customerDetails.map((customer, index) => (
-                                            <tr key={customer._id}>
+                                            <tr key={customer?._id}>
                                                 <td>{(currentPage - 1) * pageSize + index + 1}</td>
                                                 <td>
                                                     <div className="d-flex justify-content-center align-items-center">
                                                         <div className="table-user-img">
-                                                            <img src={customer.image} className="w-100 h-10" alt={customer.name} />
+                                                            <img src={customer?.profile_image || customerImg} className="w-100 h-10" alt={customer?.name} />
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>{customer.user_name}</td>
-                                                <td>{customer.email}</td>
-                                                <td>{`(${customer.country_code}) ${customer.phone_number}`}</td>
-                                                <td>{`${customer.first_name} ${customer.last_name}`}</td>
-                                                <td>{customer.news_letter ? "Yes" : "No"}</td>
-                                                <td>{customer.language || "English"}</td>
-                                                <td>{customer.address || "--"}</td>
-                                                <td>{formatDate(customer.createdAt)}</td>
+                                                <td>{customer?.user_name}</td>
+                                                <td>{customer?.email}</td>
+                                                <td>{`(${customer?.country_code}) ${customer?.phone_number}`}</td>
+                                                <td>{`${customer?.first_name} ${customer?.last_name}`}</td>
+                                                <td>{customer?.news_letter ? "Yes" : "No"}</td>
+                                                <td>{customer?.language || "English"}</td>
+                                                <td>{customer?.address || "--"}</td>
+                                                <td>{formatDate(customer?.createdAt)}</td>
                                                 <td>
                                                     <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                        <Link to={`/customers_view/${customer._id}`} className="table-icon bg-success">
+                                                        <Link to={`/customers_view/${customer?._id}`} className="table-icon bg-success">
                                                             <i className="fa-solid fa-desktop"></i>
                                                         </Link>
-                                                        <Link to={`/customer_edit/${customer._id}`} className="table-icon bg-main">
+                                                        <Link to={`/customer_edit/${customer?._id}`} className="table-icon bg-main">
                                                             <i className="fa-solid fa-pencil"></i>
                                                         </Link>
                                                         <div className="table-icon bg-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
                                                             onClick={() => {
-                                                                setSelectedCustomerId(customer._id)
+                                                                setSelectedCustomerId(customer?._id)
                                                                 setIsOpenPopup(true)
                                                             }}>
                                                             <i className="fa-solid fa-trash"></i>
