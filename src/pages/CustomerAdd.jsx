@@ -272,7 +272,7 @@ function CustomerAdd() {
                                             rules={{ required: "Phone number is required" }}
                                             render={({ field }) => (
                                                 <PhoneInput
-                                                    country={"us"}
+                                                    country={"gb"}
                                                     inputclassName={`form-control custom-phone-input ${errors.contact ? 'is-invalid' : ''}`}
                                                     inputStyle={{
                                                         fontWeight: "400",

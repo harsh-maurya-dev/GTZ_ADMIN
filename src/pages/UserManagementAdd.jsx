@@ -24,12 +24,17 @@ const UserManagementAdd = () => {
                                 <div className="col-6">
                                     <div className="form-group">
                                         <label htmlFor="" className="form-label">Role</label>
-                                        <input type="text" className="form-control" />
+                                        <select  name="" id="" className="form-select">
+                                        <option name="" id="" className="form-select">Admin</option>
+                                        <option name="" id="" className="form-select">Owner</option>
+                                        <option name="" id="" className="form-select">User</option>
+                                        <option name="" id="" className="form-select">Manager</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label htmlFor="" className="form-label">UserName</label>
+                                        <label htmlFor="" className="form-label">Username</label>
                                         <input type="text" className="form-control" />
                                     </div>
                                 </div>

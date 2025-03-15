@@ -1,14 +1,54 @@
-import React from 'react'
-import order_image from "../assets/img/bg-img/ChatBc.webp"
+import React, { useState } from 'react';
+import order_image from "../assets/img/bg-img/ChatBc.webp";
+import { Link } from 'react-router-dom';
 
 const Order = () => {
-    const orders = [
-        { id: 1, orderId: 15, variationId: 1802, productId: 1802, payment: "PayPal", name: "Jhon Doe", email: "jhon@gmail.com", customerNumber: "2209022", accountNo: "C0012035", price: "$414.56", status: "Pending" },
-        { id: 2, orderId: "#3232", variationId: "#12345", productId: "#343456", payment: "PayPal", name: "Jhon Doe", email: "jhon@gmail.com", customerNumber: "2209022", accountNo: "C0012035", price: "$414.56", status: "Complete" },
-        { id: 3, orderId: "#3232", variationId: "#12345", productId: "#343456", payment: "PayPal", name: "Jhon Doe", email: "jhon@gmail.com", customerNumber: "2209022", accountNo: "C0012035", price: "$414.56", status: "Cancel" },
+    // Dummy JSON data for orders
+    const dummyOrders = [
+        { id: 1, orderId: "#15", variationId: "#1802", productId: "#1802", payment: "PayPal", name: "John Doe", email: "john@gmail.com", customerNumber: "2209022", accountNo: "C0012035", price: "$414.56", status: "Pending" },
+        { id: 2, orderId: "#3232", variationId: "#12345", productId: "#343456", payment: "PayPal", name: "Jane Smith", email: "jane@gmail.com", customerNumber: "2209023", accountNo: "C0012036", price: "$120.00", status: "Complete" },
+        { id: 3, orderId: "#3233", variationId: "#12346", productId: "#343457", payment: "Credit Card", name: "Alice Johnson", email: "alice@gmail.com", customerNumber: "2209024", accountNo: "C0012037", price: "$250.00", status: "Failed" },
+        { id: 4, orderId: "#3234", variationId: "#12347", productId: "#343458", payment: "PayPal", name: "Bob Brown", email: "bob@gmail.com", customerNumber: "2209025", accountNo: "C0012038", price: "$99.99", status: "Pending" },
+        { id: 5, orderId: "#3235", variationId: "#12348", productId: "#343459", payment: "Credit Card", name: "Charlie Davis", email: "charlie@gmail.com", customerNumber: "2209026", accountNo: "C0012039", price: "$300.00", status: "Complete" },
     ];
 
-    
+    const [orders, setOrders] = useState(dummyOrders); // Use dummy data
+    const [loading, setLoading] = useState(false); // No loading state needed for static data
+
+    const renderOrderRow = (order, index) => {
+        return (
+            <tr key={order.id}>
+                <td>{index + 1}</td>
+                <td>{order.orderId}</td>
+                <td>{order.variationId}</td>
+                <td>{order.productId}</td>
+                <td>{order.payment}</td>
+                <td>{order.name}</td>
+                <td>{order.email}</td>
+                <td>{order.customerNumber}</td>
+                <td>{order.accountNo}</td>
+                <td>{order.price}</td>
+                <td>
+                    <div className={`badge ${order.status === "Complete" ? "bg-light-success text-success" : order.status === "Pending" ? "bg-warning" : "bg-light-danger text-danger"}`}>
+                        {order.status}
+                    </div>
+                </td>
+                <td>
+                    <div className="d-flex justify-content-center gap-2 align-items-center">
+                        <Link to="/orders_management_view" className="table-icon bg-success">
+                            <i className="fa-solid fa-desktop"></i>
+                        </Link>
+                        <Link to="/orders_management_edit" className="table-icon bg-main">
+                            <i className="fa-solid fa-pencil"></i>
+                        </Link>
+                        <a href="#" className="table-icon bg-danger">
+                            <i className="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        );
+    };
 
     return (
         <>
@@ -103,7 +143,6 @@ const Order = () => {
                             <div className="tab-pane fade show active" id="all" role="tabpanel"
                                 aria-labelledby="all-tab">
                                 <div className="table-responsive">
-                                    {/* All table */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -122,38 +161,7 @@ const Order = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {orders.map((order, index) => (
-                                                <tr key={order.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{order.orderId}</td>
-                                                    <td>{order.variationId}</td>
-                                                    <td>{order.productId}</td>
-                                                    <td>{order.payment}</td>
-                                                    <td>{order.name}</td>
-                                                    <td>{order.email}</td>
-                                                    <td>{order.customerNumber}</td>
-                                                    <td>{order.accountNo}</td>
-                                                    <td>{order.price}</td>
-                                                    <td>
-                                                        <div className={`badge ${order.status === "Complete" ? "bg-light-success text-success" : order.status === "Pending" ? "bg-warning" : "bg-light-danger text-danger"}`}>
-                                                            {order.status}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                            <a href="order_view.html" className="table-icon bg-success">
-                                                                <i className="fa-solid fa-desktop"></i>
-                                                            </a>
-                                                            <a href="order_edit.html" className="table-icon bg-main">
-                                                                <i className="fa-solid fa-pencil"></i>
-                                                            </a>
-                                                            <a href="#" className="table-icon bg-danger">
-                                                                <i className="fa-solid fa-trash"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                            {orders.map((order, index) => renderOrderRow(order, index))}
                                         </tbody>
                                     </table>
                                 </div>
@@ -161,7 +169,6 @@ const Order = () => {
                             <div className="tab-pane fade" id="succeeded" role="tabpanel"
                                 aria-labelledby="succeeded-tab">
                                 <div className="table-responsive">
-                                    {/* Succeeded table */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -180,45 +187,13 @@ const Order = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {orders.map((order, index) => (
-                                                <tr key={order.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{order.orderId}</td>
-                                                    <td>{order.variationId}</td>
-                                                    <td>{order.productId}</td>
-                                                    <td>{order.payment}</td>
-                                                    <td>{order.name}</td>
-                                                    <td>{order.email}</td>
-                                                    <td>{order.customerNumber}</td>
-                                                    <td>{order.accountNo}</td>
-                                                    <td>{order.price}</td>
-                                                    <td>
-                                                        <div className={`badge ${order.status === "Complete" ? "bg-light-success text-success" : order.status === "Pending" ? "bg-warning" : "bg-light-danger text-danger"}`}>
-                                                            {order.status}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                            <a href="order_view.html" className="table-icon bg-success">
-                                                                <i className="fa-solid fa-desktop"></i>
-                                                            </a>
-                                                            <a href="order_edit.html" className="table-icon bg-main">
-                                                                <i className="fa-solid fa-pencil"></i>
-                                                            </a>
-                                                            <a href="#" className="table-icon bg-danger">
-                                                                <i className="fa-solid fa-trash"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                            {orders.filter(order => order.status === "Complete").map((order, index) => renderOrderRow(order, index))}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div className="tab-pane fade" id="failed" role="tabpanel" aria-labelledby="failed-tab">
                                 <div className="table-responsive">
-                                    {/* failed table */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -237,38 +212,7 @@ const Order = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {orders.map((order, index) => (
-                                                <tr key={order.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{order.orderId}</td>
-                                                    <td>{order.variationId}</td>
-                                                    <td>{order.productId}</td>
-                                                    <td>{order.payment}</td>
-                                                    <td>{order.name}</td>
-                                                    <td>{order.email}</td>
-                                                    <td>{order.customerNumber}</td>
-                                                    <td>{order.accountNo}</td>
-                                                    <td>{order.price}</td>
-                                                    <td>
-                                                        <div className={`badge ${order.status === "Complete" ? "bg-light-success text-success" : order.status === "Pending" ? "bg-warning" : "bg-light-danger text-danger"}`}>
-                                                            {order.status}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                            <a href="order_view.html" className="table-icon bg-success">
-                                                                <i className="fa-solid fa-desktop"></i>
-                                                            </a>
-                                                            <a href="order_edit.html" className="table-icon bg-main">
-                                                                <i className="fa-solid fa-pencil"></i>
-                                                            </a>
-                                                            <a href="#" className="table-icon bg-danger">
-                                                                <i className="fa-solid fa-trash"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                            {orders.filter(order => order.status === "Failed").map((order, index) => renderOrderRow(order, index))}
                                         </tbody>
                                     </table>
                                 </div>
@@ -276,7 +220,6 @@ const Order = () => {
                             <div className="tab-pane fade" id="pending" role="tabpanel"
                                 aria-labelledby="pending-tab">
                                 <div className="table-responsive">
-                                    {/* pending payments table */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -295,45 +238,13 @@ const Order = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {orders.map((order, index) => (
-                                                <tr key={order.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{order.orderId}</td>
-                                                    <td>{order.variationId}</td>
-                                                    <td>{order.productId}</td>
-                                                    <td>{order.payment}</td>
-                                                    <td>{order.name}</td>
-                                                    <td>{order.email}</td>
-                                                    <td>{order.customerNumber}</td>
-                                                    <td>{order.accountNo}</td>
-                                                    <td>{order.price}</td>
-                                                    <td>
-                                                        <div className={`badge ${order.status === "Complete" ? "bg-light-success text-success" : order.status === "Pending" ? "bg-warning" : "bg-light-danger text-danger"}`}>
-                                                            {order.status}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                            <a href="order_view.html" className="table-icon bg-success">
-                                                                <i className="fa-solid fa-desktop"></i>
-                                                            </a>
-                                                            <a href="order_edit.html" className="table-icon bg-main">
-                                                                <i className="fa-solid fa-pencil"></i>
-                                                            </a>
-                                                            <a href="#" className="table-icon bg-danger">
-                                                                <i className="fa-solid fa-trash"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                            {orders.filter(order => order.status === "Pending").map((order, index) => renderOrderRow(order, index))}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div className="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
                                 <div className="table-responsive">
-                                    {/* others table */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -352,38 +263,7 @@ const Order = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {orders.map((order, index) => (
-                                                <tr key={order.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{order.orderId}</td>
-                                                    <td>{order.variationId}</td>
-                                                    <td>{order.productId}</td>
-                                                    <td>{order.payment}</td>
-                                                    <td>{order.name}</td>
-                                                    <td>{order.email}</td>
-                                                    <td>{order.customerNumber}</td>
-                                                    <td>{order.accountNo}</td>
-                                                    <td>{order.price}</td>
-                                                    <td>
-                                                        <div className={`badge ${order.status === "Complete" ? "bg-light-success text-success" : order.status === "Pending" ? "bg-warning" : "bg-light-danger text-danger"}`}>
-                                                            {order.status}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                            <a href="order_view.html" className="table-icon bg-success">
-                                                                <i className="fa-solid fa-desktop"></i>
-                                                            </a>
-                                                            <a href="order_edit.html" className="table-icon bg-main">
-                                                                <i className="fa-solid fa-pencil"></i>
-                                                            </a>
-                                                            <a href="#" className="table-icon bg-danger">
-                                                                <i className="fa-solid fa-trash"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                            {orders.filter(order => order.status !== "Complete" && order.status !== "Failed" && order.status !== "Pending").map((order, index) => renderOrderRow(order, index))}
                                         </tbody>
                                     </table>
                                 </div>
@@ -393,7 +273,7 @@ const Order = () => {
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default Order
+export default Order;

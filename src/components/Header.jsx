@@ -104,9 +104,9 @@ const Header = () => {
                                 </li>
                                 <li><Link to="/help" onClick={() => setIsOpenProfile(!isOpenProfile)}><i
                                     className="fa-brands fa-hire-a-helper text-main"></i>&nbsp;Help</Link></li>
-                                <li><button type="button" onClick={logout}><i
+                                <li><Link to="#" type="button" onClick={logout}><i
                                     className="fa-solid fa-right-from-bracket text-main"></i>&nbsp;Sign
-                                    Out</button></li>
+                                    Out</Link></li>
                             </ul>
                         </div>
                     </div>

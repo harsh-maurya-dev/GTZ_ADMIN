@@ -78,12 +78,12 @@ const Sidebar = () => {
                             </Link>
                         ))
                     }
-                    <div className='logout' onClick={handleLogout}>
+                    <Link to="#" className='logout' onClick={handleLogout}>
                         <span>
                             <i className="fa-solid fa-sign-out"></i>
                         </span>
                         <span>Logout</span>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </>

@@ -77,6 +77,8 @@ import AnnouncementEdit from './pages/AnnouncementEdit';
 import DiscountCodesGlobalView from './pages/DiscountCodesGlobalView';
 import DiscountCodesGlobalEdit from './pages/DiscountCodesGlobalEdit';
 import DiscountCodesGlobalAdd from './pages/DiscountCodesGlobalAdd';
+import OrderEdit from './pages/OrderEdit';
+import OrderView from './pages/OrderView';
 
 function App() {
   return (
@@ -97,7 +99,7 @@ function App() {
             <Route path="/competitions" element={<Competitions />} />
             <Route path="/competitions_add" element={<CompetitionAdd />} />
             <Route path="/competitions_view" element={<CompetitionsView />} />
-            <Route path="/competitions_edit" element={<CompetitionsEdit />} />
+            <Route path="/competitions_edit/:id" element={<CompetitionsEdit />} />
             <Route path="/customers_management" element={<Customer />} />
             <Route path="/customers_view/:id" element={<CustomerView />} />
             <Route path="/customer_add" element={<CustomerAdd />} />
@@ -108,57 +110,59 @@ function App() {
             <Route path="/challenge_edit/:id" element={<ChallengeEdit />} />
             <Route path="/challenge_view/:id" element={<ChallengeView />} />
             <Route path="/orders_management" element={<Order />} />
+            <Route path="/orders_management_edit/:id" element={<OrderEdit />} />
+            <Route path="/orders_management_view" element={<OrderView />} />
             <Route path="/contract_management" element={<Contract />} />
             <Route path="/contract_view" element={<ContractView />} />
             <Route path="/contract_templete" element={<ContractTemplate />} />
             <Route path="/contract_templete_add" element={<ContractTempleteAdd />} />
-            <Route path="/contract_templete_edit" element={<ContractTempleteEdit />} />
+            <Route path="/contract_templete_edit/:id" element={<ContractTempleteEdit />} />
             <Route path="/pending_upgrades" element={<PendingUpgrades />} />
             <Route path="/risk_triggers" element={<RiskTriggers />} />
             <Route path="/risk_triggers_add" element={<RiskTriggersAdd />} />
             <Route path="/risk_triggers_view" element={<RiskTriggersView />} />
-            <Route path="/risk_triggers_edit" element={<RiskTriggersEdit />} />
+            <Route path="/risk_triggers_edit/:id" element={<RiskTriggersEdit />} />
             <Route path="/risk_notification" element={<RiskNotification />} />
             <Route path="/affiliates_management" element={<Affiliates />} />
             <Route path="/affiliate_payout_management" element={<AffiliatePayout />} />
             <Route path="/plans_management" element={<PlansManagement />} />
             <Route path="/plans_management_add" element={<PlanManagementAdd />} />
-            <Route path="/plans_management_edit" element={<PlanManagementEdit />} />
+            <Route path="/plans_management_edit/:id" element={<PlanManagementEdit />} />
             <Route path="/plans_management_view" element={<PlanManagementView />} />
             <Route path="/prop_account_management" element={<PropAccount />} />
             <Route path="/prop_account_view" element={<PropAccountView />} />
-            <Route path="/prop_account_edit" element={<PropAccountEdit />} />
+            <Route path="/prop_account_edit/:id" element={<PropAccountEdit />} />
             <Route path="/prop_payout_management" element={<PropPayout />} />
             <Route path="/reports_management" element={<ReportManagement />} />
             <Route path="/reports_management_add" element={<ReportsManagementAdd />} />
-            <Route path="/reports_management_edit" element={<ReportsManagementEdit />} />
+            <Route path="/reports_management_edit/:id" element={<ReportsManagementEdit />} />
             <Route path="/reports_management_view" element={<ReportsManagementView />} />
             <Route path="/content_management" element={<ContentManagement />} />
             <Route path="/content_management_add" element={<ContentManagementAdd />} />
-            <Route path="/content_management_edit" element={<ContentManagementEdit />} />
-            <Route path="/content_management_view" element={<ContentManagementView />} />
+            <Route path="/content_management_edit/:id" element={<ContentManagementEdit />} />
+            <Route path="/content_management_view/:id" element={<ContentManagementView />} />
             <Route path="/FAQ_management" element={<FAQ />} />
             <Route path="/FAQ_management_add" element={<FAQAdd />} />
-            <Route path="/FAQ_management_edit" element={<FAQEdit />} />
-            <Route path="/FAQ_management_view" element={<FAQView />} />
+            <Route path="/FAQ_management_edit/:id" element={<FAQEdit />} />
+            <Route path="/FAQ_management_view/:id" element={<FAQView />} />
             <Route path="/download_management" element={<Download />} />
             <Route path="/download_management_add" element={<DownloadAdd />} />
-            <Route path="/download_management_edit" element={<DownloadEdit />} />
+            <Route path="/download_management_edit/:id" element={<DownloadEdit />} />
             <Route path="/video_management" element={<VideoManagement />} />
             <Route path="/video_management_add" element={<VideoManagementAdd />} />
-            <Route path="/video_management_edit" element={<VideoManagementEdit />} />
-            <Route path="/video_management_view" element={<VideoManagementView />} />
+            <Route path="/video_management_edit/:id" element={<VideoManagementEdit />} />
+            <Route path="/video_management_view/:id" element={<VideoManagementView />} />
             <Route path="/image_management" element={<ImageManagement />} />
             <Route path="/users_management" element={<UserManagement />} />
             <Route path="/users_management_add" element={<UserManagementAdd />} />
-            <Route path="/users_management_edit" element={<UserManagementEdit />} />
+            <Route path="/users_management_edit/:id" element={<UserManagementEdit />} />
             <Route path="/announcement" element={<Announcement />} />
             <Route path="/announcement_add" element={<AnnouncementAdd />} />
-            <Route path="/announcement_edit" element={<AnnouncementEdit />} />
+            <Route path="/announcement_edit/:id" element={<AnnouncementEdit />} />
             <Route path="/discount_codes_management" element={<DiscountCodes />} />
             <Route path="/discount_codes_management_global_add" element={<DiscountCodesGlobalAdd />} />
             <Route path="/discount_codes_management_global_view" element={<DiscountCodesGlobalView />} />
-            <Route path="/discount_codes_management_global_edit" element={<DiscountCodesGlobalEdit />} />
+            <Route path="/discount_codes_management_global_edit/:id" element={<DiscountCodesGlobalEdit />} />
             <Route path="/discount_codes_management_breach_view" element={<DiscountCodes />} />
             <Route path="/email_management" element={<EmailManagement />} />
 
