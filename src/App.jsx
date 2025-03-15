@@ -140,18 +140,18 @@ function App() {
             <Route path="/content_management" element={<ContentManagement />} />
             <Route path="/content_management_add" element={<ContentManagementAdd />} />
             <Route path="/content_management_edit/:id" element={<ContentManagementEdit />} />
-            <Route path="/content_management_view" element={<ContentManagementView />} />
+            <Route path="/content_management_view/:id" element={<ContentManagementView />} />
             <Route path="/FAQ_management" element={<FAQ />} />
             <Route path="/FAQ_management_add" element={<FAQAdd />} />
             <Route path="/FAQ_management_edit/:id" element={<FAQEdit />} />
-            <Route path="/FAQ_management_view" element={<FAQView />} />
+            <Route path="/FAQ_management_view/:id" element={<FAQView />} />
             <Route path="/download_management" element={<Download />} />
             <Route path="/download_management_add" element={<DownloadAdd />} />
             <Route path="/download_management_edit/:id" element={<DownloadEdit />} />
             <Route path="/video_management" element={<VideoManagement />} />
             <Route path="/video_management_add" element={<VideoManagementAdd />} />
             <Route path="/video_management_edit/:id" element={<VideoManagementEdit />} />
-            <Route path="/video_management_view" element={<VideoManagementView />} />
+            <Route path="/video_management_view/:id" element={<VideoManagementView />} />
             <Route path="/image_management" element={<ImageManagement />} />
             <Route path="/users_management" element={<UserManagement />} />
             <Route path="/users_management_add" element={<UserManagementAdd />} />

@@ -285,7 +285,7 @@ const Customer = () => {
                             <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
                                 aria-hidden="true" style={{ backgroundColor: "#00000075" }}>
                                 <div className="modal-dialog modal-dialog-centered">
-                                    <div className="modal-content delete-user-modal">
+                                    <div className="modal-content comman-design delete-user-modal">
                                         <div className="modal-header">
                                             <h5 className="modal-title text-white" id="deleteUserModalLabel">
                                                 <i className="fa fa-user-circle"></i> Confirm Delete Customer

@@ -218,10 +218,10 @@ const TradingPlatform = () => {
                             <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
                                 aria-hidden="true" style={{ backgroundColor: "#00000075" }}>
                                 <div className="modal-dialog modal-dialog-centered">
-                                    <div className="modal-content delete-user-modal">
+                                    <div className="modal-content comman-design delete-user-modal">
                                         <div className="modal-header">
                                             <h5 className="modal-title text-white" id="deleteUserModalLabel">
-                                                <i className="fa fa-user-circle"></i> Confirm Delete User
+                                                <i className="fa fa-user-circle"></i> Confirm Delete Platform
                                             </h5>
                                             <button type="button" className="btn-close text-white bg-white" data-bs-dismiss="modal"
                                                 aria-label="Close" id="closeDeleteUserModal" onClick={() => setIsOpenPopup(false)}></button>
@@ -230,7 +230,7 @@ const TradingPlatform = () => {
                                             <div className="delete-icon">
                                                 <i className="fa fa-times"></i>
                                             </div>
-                                            <p className="mt-3 text-white">Are you sure you want to delete this user?</p>
+                                            <p className="mt-3 text-white">Are you sure you want to delete this trading platform?</p>
                                         </div>
                                         <div className="modal-footer">
                                             <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>

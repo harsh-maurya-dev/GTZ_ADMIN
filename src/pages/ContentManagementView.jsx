@@ -1,4 +1,40 @@
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 const ContentManagementView = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [contentData, setContentData] = useState(location.state?.contentData || null);
+    const [loading, setLoading] = useState(!location.state?.contentData);
+
+    // Fetch data if not passed via location state
+    // useEffect(() => {
+    //     if (!location.state?.contentData) {
+    //         const fetchData = async () => {
+    //             try {
+    //                 // Replace with your actual API endpoint
+    //                 const response = await fetch('https://api.example.com/content/67d1289cfae9bd2230327d67');
+    //                 const data = await response.json();
+    //                 setContentData(data);
+    //             } catch (error) {
+    //                 console.error("Error fetching data:", error);
+    //             } finally {
+    //                 setLoading(false);
+    //             }
+    //         };
+
+    //         fetchData();
+    //     }
+    // }, [location.state]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!contentData) {
+        return <div>No content data available.</div>;
+    }
+
     return (
         <>
             <div className="mt-4">
@@ -8,22 +44,15 @@ const ContentManagementView = () => {
                     </div>
                     <div className="comman-design-body">
                         <div id="editor-body-two" className="editor-container">
-                            <h1>About us</h1>
-                            <h5>Lorem ipsum</h5>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime quidem ut
-                                placeat, iste possimus magnam neque facere id dolore! Unde, illum error
-                                consectetur voluptates a corrupti ea cum et modi?
-                            </p>
+                            <h1>{contentData?.type_key}</h1>
+                            <h2>{contentData?.heading}</h2>
+                            <div dangerouslySetInnerHTML={{ __html: contentData?.content }} />
                         </div>
-                        {/* <!-- <div className="mt-4">
-                                    <button className="comman-btn">SAVE</button>
-                                </div> --> */}
                     </div>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default ContentManagementView
+export default ContentManagementView;
