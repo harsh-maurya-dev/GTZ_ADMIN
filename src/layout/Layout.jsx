@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 // import Dashboard from "../pages/Dashboard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import { ProfileProvider } from "../context/ProfileContext";
 
 const Layout = () => {
   // const handleNavToggle = () => {
@@ -16,7 +17,7 @@ const Layout = () => {
           </div>
           <div className="col-9 content-part-wrapper">
             <div className="content-part">
-              <Header />
+                <Header />
               <Outlet />
             </div>
           </div>

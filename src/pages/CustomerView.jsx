@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import user_image from "../assets/img/user/user-3.jpg"
+import { useEffect, useState } from 'react';
+import user_image from "../assets/img/user/user-3.jpg";
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { apiCall } from '../../api/ApiCall.js';
 
 function CustomerView() {
-
     const { id } = useParams(); // Get the ID from the route
     const [customer, setCustomer] = useState({});
-    const [loading, setLoading] = useState(true)
-    const { user_name, first_name, last_name, email, country, state, city, phone_number, pin_code, newsletter, country_code, createdAt, address } = customer
+    const [loading, setLoading] = useState(true);
+    const { user_name, first_name, last_name, email, country, state, city, phone_number, pin_code, newsletter, country_code, createdAt, address } = customer;
 
     function formatDate(newdata) {
         if (!loading) {
-            const date = newdata.split("T")[0]
-            return date
+            const date = newdata.split("T")[0];
+            return date;
         }
     }
 
@@ -37,31 +36,23 @@ function CustomerView() {
 
     useEffect(() => {
         const fetchCustomer = async () => {
-            const token = localStorage.getItem("token");
-
             try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/user/getCustomerDetails/${id}`,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "x-auth-token-user": token,
-                        },
-                    }
-                );
-                setCustomer(response.data.results?.customer);
-                setLoading(false)
-                // console.log(response.data.results.customer);
+                const response = await apiCall('get', `/user/getCustomerDetails/${id}`);
+                setCustomer(response.results?.customer);
+                setLoading(false);
             } catch (error) {
-                setLoading(true)
+                setLoading(true);
                 console.error("Error fetching customer details:", error);
+                if (error.isAuthError) {
+                    // Handle authentication error, e.g., redirect to login
+                    console.error("Authentication error:", error.message);
+                    // Optionally, redirect to login page or show a message
+                }
             }
         };
 
         fetchCustomer();
     }, [id]);
-
-
 
     return (
         <>

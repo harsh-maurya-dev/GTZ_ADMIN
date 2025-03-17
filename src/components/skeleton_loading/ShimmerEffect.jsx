@@ -5,44 +5,44 @@ function ShimmerEffect() {
         <>
 
             {/* skelton table */}
-            <table class="table table-hover table-skeleton">
+            <table className="table table-hover table-skeleton">
                 <thead>
                     <tr>
-                        <th><div class="skeleton"></div></th>
-                        <th><div class="skeleton"></div></th>
-                        <th><div class="skeleton"></div></th>
-                        <th><div class="skeleton"></div></th>
-                        <th><div class="skeleton"></div></th>
+                        <th><div className="skeleton"></div></th>
+                        <th><div className="skeleton"></div></th>
+                        <th><div className="skeleton"></div></th>
+                        <th><div className="skeleton"></div></th>
+                        <th><div className="skeleton"></div></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
                     </tr>
                     <tr>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
                     </tr>
                     <tr>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
                     </tr>
                     <tr>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
-                        <td><div class="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
+                        <td><div className="skeleton"></div></td>
                     </tr>
                 </tbody>
             </table>

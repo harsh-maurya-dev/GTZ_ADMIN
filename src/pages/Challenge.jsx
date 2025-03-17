@@ -1,53 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import challenge_image from "../assets/img/bg-img/ChatBc.webp";
 import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import { apiCall } from '../../api/ApiCall.js'
 
 const Challenge = () => {
     const [challenges, setChallenges] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
-    // const [totalChallenge, setTotalChallenge] = useState(0)
-    const [searchParams, setSearchParam] = useSearchParams()
-    const [pageSize, setPageSize] = useState(5)
-    const [year, setYear] = useState(2025)
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [searchParams, setSearchParam] = useSearchParams();
+    const [pageSize, setPageSize] = useState(5);
+    const [year, setYear] = useState(2025);
 
     const fetchChallenges = async (page) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            return;
-        }
         try {
             const params = {
                 page,
                 pageSize,
-                year, // Only add if selected
+                year,
             };
-            const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/trading/getChallenges`,
-                params,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            );
-            setChallenges(response.data.results?.challenges || []);
-            setTotalPages(response.data.results.totalPages || 1)
-            // setTotalChallenge(response.data.results.total || 0)
+
+            const response = await apiCall('patch', '/trading/getChallenges', params);
+
+            if (response.error === false) {
+                setChallenges(response.results?.challenges || []);
+                setTotalPages(response.results.totalPages || 1);
+            }
         } catch (error) {
             console.error("Error fetching challenges:", error);
+            toast.error(error.message || "Failed to fetch challenges.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
         }
     };
 
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
-            setCurrentPage(newPage)
+            setCurrentPage(newPage);
         }
-    }
+    };
 
     useEffect(() => {
         fetchChallenges(currentPage);
@@ -65,7 +56,6 @@ const Challenge = () => {
                         <div className="d-flex gap-3">
                             <div>
                                 <h2 className="comman-heading">Challenge</h2>
-                                {/* <span className="border rounded-pill py-1 px-3">{challenges.length}</span> */}
                             </div>
                             <div>
                                 <Link to="/challenge_add" className="comman-btn">
@@ -150,7 +140,7 @@ const Challenge = () => {
                                             <td>{challenge.failed || 0}</td>
                                             <td>
                                                 <div className={`badge ${challenge.status ? "bg-light-success text-success" : "bg-light-danger text-danger"}`}>
-                                                    {challenge.status ? "Active" : "InActive"}
+                                                    {challenge.status ? "Active" : "Inactive"}
                                                 </div>
                                             </td>
                                             <td>
@@ -158,7 +148,7 @@ const Challenge = () => {
                                                     <Link to={`/challenge_view/${challenge._id}`} className="table-icon bg-success">
                                                         <i className="fa-solid fa-desktop"></i>
                                                     </Link>
-                                                    <Link to={`/challenge_edit/${challenge._id}`} className="table-icon bg-main" >
+                                                    <Link to={`/challenge_edit/${challenge._id}`} className="table-icon bg-main">
                                                         <i className="fa-solid fa-pencil"></i>
                                                     </Link>
                                                     <a href="#" className="table-icon bg-danger">

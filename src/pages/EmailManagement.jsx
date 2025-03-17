@@ -1,5 +1,5 @@
 import tempImg from "../assets/img/gfz_email.png"
-
+import bgImg from "../assets/img/bg-img/ChatBc.webp"
 function EmailManagement() {
     return (
         <>
@@ -14,7 +14,7 @@ function EmailManagement() {
                         </div>
                         <div className="breadcrumb-img-wrapper">
                             <div className="breadcrumb-img">
-                                <img src="assets/img/bg-img/ChatBc.webp" alt="" className="w-100 h-100" />
+                                <img src={bgImg} alt="" className="w-100 h-100" />
                             </div>
                         </div>
                     </div>
@@ -181,6 +181,7 @@ function EmailManagement() {
                                                     paddingBottom: "10px",
                                                     borderBottom: "3px solid #080fb7",
                                                 }}
+                                                className="d-flex  justify-content-center align-items-center"
                                             >
                                                 <table>
                                                     <thead>

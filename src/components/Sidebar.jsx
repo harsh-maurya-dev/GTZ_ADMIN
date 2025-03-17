@@ -42,7 +42,7 @@ const Sidebar = () => {
 
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("x-auth-token-user-gfz");
         toast.success("Logout successful!", {style:{backgroundColor:"#1a406a", color:"#fff"}});
         setTimeout(() => {
             window.location.reload();

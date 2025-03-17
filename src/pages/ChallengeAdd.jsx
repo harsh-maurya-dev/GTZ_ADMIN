@@ -1,6 +1,6 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { apiCall } from "../../api/ApiCall.js"
 
 function ChallengeAdd() {
     const [formData, setFormData] = useState({
@@ -40,39 +40,34 @@ function ChallengeAdd() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Form Data:", formData);
-        const token = localStorage.getItem("token")
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            return;
-        }
+
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/trading/createChallenge`,
-                {
-                    "phases": [
-                        {
-                            "name": formData.name,
-                            "price": Number(formData.price),  // Ensure price is a number
-                            "features": formData.featureDetails
-                        }
-                    ]
-                },
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            )
-            if(response.data.error === false){
-                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } }); 
+            const response = await apiCall('post', '/trading/createChallenge', {
+                phases: [
+                    {
+                        name: formData.name,
+                        price: Number(formData.price),  // Ensure price is a number
+                        features: formData.featureDetails
+                    }
+                ]
+            });
+
+            if (response.error === false) {
+                toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 setFormData({
                     name: "",
                     price: "",
                     featureDetails: [""],
                 });
+            } else {
+                toast.error(response.message || "Failed to create challenge.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
             }
         } catch (error) {
-            console.log(error.message);
+            toast.error(error.message || "An error occurred while creating the challenge.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
         }
     };
 

@@ -1,25 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import trading_image from "../assets/img/bg-img/ChatBc.webp";
 import { toast } from 'react-toastify';
-import axios from 'axios';
-
+import { apiCall } from "../../api/ApiCall.js"
 const TradingPlatform = () => {
     const [traders, setTraders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [year, setYear] = useState(2025);
-        const [selectedTraderId, setSelectedTraderId] = useState(null)
-    const [isOpenPopup, setIsOpenPopup] = useState(false)
+    const [selectedTraderId, setSelectedTraderId] = useState(null);
+    const [isOpenPopup, setIsOpenPopup] = useState(false);
 
     const fetchTraders = async (page) => {
         setLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            setLoading(false);
-            return;
-        }
 
         try {
             const params = {
@@ -28,22 +21,12 @@ const TradingPlatform = () => {
                 year, // Only add if selected
             };
 
-            const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/trading/tradingPlatforms`,
-                params,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                }
-            );
+            const response = await apiCall('patch', '/trading/tradingPlatforms', params);
 
-            if (response.data.error === false) {
-                setTraders(response.data.results.platforms);
-                setTotalPages(response.data.results.totalPages || 1);
-                console.log(response.data.results.platforms);
+            if (response.error === false) {
+                setTraders(response.results.platforms);
+                setTotalPages(response.results.totalPages || 1);
+                console.log(response.results.platforms);
             }
         } catch (error) {
             toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
@@ -52,58 +35,13 @@ const TradingPlatform = () => {
         }
     };
 
-    // const toggleStatus = async (id, currentStatus) => {
-    //     const token = localStorage.getItem("token");
-    //     if (!token) {
-    //         toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.patch(
-    //             `${import.meta.env.VITE_API_URL}/trading/tradingPlatforms/${id}/status`,
-    //             { status: !currentStatus },
-    //             {
-    //                 headers: {
-    //                     "accept": "application/json",
-    //                     "x-auth-token-user": token,
-    //                     "Content-Type": "application/json",
-    //                 },
-    //             }
-    //         );
-
-    //         if (response.data.error === false) {
-    //             setTraders(traders.map(trader => 
-    //                 trader._id === id ? { ...trader, status: !currentStatus } : trader
-    //             ));
-    //             toast.success("Status updated successfully!", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-    //         }
-    //     } catch (error) {
-    //         toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
-    //     }
-    // };
-
     const deleteTrader = async (id) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            return;
-        }
-
         try {
-            const response = await axios.delete(
-                `${import.meta.env.VITE_API_URL}/trading/deletePlatform/${id}`,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            );
+            const response = await apiCall('delete', `/trading/deletePlatform/${id}`);
 
-            if (response.data.error === false) {
+            if (response.error === false) {
                 setTraders(traders.filter(trader => trader._id !== id));
-                setIsOpenPopup(false)
+                setIsOpenPopup(false);
                 toast.success("Trader deleted successfully!", { style: { backgroundColor: "#1a406a", color: "#fff" } });
             }
         } catch (error) {
@@ -202,10 +140,10 @@ const TradingPlatform = () => {
                                             </td>
                                             <td>
                                                 <div className="d-flex justify-content-center gap-2 align-items-center">
-                                                    <button className="table-icon bg-danger" onClick={() => 
-                                                        {setSelectedTraderId(trader._id)
-                                                        setIsOpenPopup(true)}
-                                                        }>
+                                                    <button className="table-icon bg-danger" onClick={() => {
+                                                        setSelectedTraderId(trader._id);
+                                                        setIsOpenPopup(true);
+                                                    }}>
                                                         <i className="fa-solid fa-trash"></i>
                                                     </button>
                                                 </div>
@@ -215,31 +153,31 @@ const TradingPlatform = () => {
                                 </tbody>
                             </table>
                             {isOpenPopup && (
-                            <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
-                                aria-hidden="true" style={{ backgroundColor: "#00000075" }}>
-                                <div className="modal-dialog modal-dialog-centered">
-                                    <div className="modal-content comman-design delete-user-modal">
-                                        <div className="modal-header">
-                                            <h5 className="modal-title text-white" id="deleteUserModalLabel">
-                                                <i className="fa fa-user-circle"></i> Confirm Delete Platform
-                                            </h5>
-                                            <button type="button" className="btn-close text-white bg-white" data-bs-dismiss="modal"
-                                                aria-label="Close" id="closeDeleteUserModal" onClick={() => setIsOpenPopup(false)}></button>
-                                        </div>
-                                        <div className="modal-body text-center">
-                                            <div className="delete-icon">
-                                                <i className="fa fa-times"></i>
+                                <div className="modal fade user-modal show d-block" id="deleteUserModal" tabIndex="-1" aria-labelledby="deleteUserModalLabel"
+                                    aria-hidden="true" style={{ backgroundColor: "#00000075" }}>
+                                    <div className="modal-dialog modal-dialog-centered">
+                                        <div className="modal-content comman-design delete-user-modal">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title text-white" id="deleteUserModalLabel">
+                                                    <i className="fa fa-user-circle"></i> Confirm Delete Platform
+                                                </h5>
+                                                <button type="button" className="btn-close text-white bg-white" data-bs-dismiss="modal"
+                                                    aria-label="Close" id="closeDeleteUserModal" onClick={() => setIsOpenPopup(false)}></button>
                                             </div>
-                                            <p className="mt-3 text-white">Are you sure you want to delete this trading platform?</p>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>
-                                            <button type="button" className="btn btn-danger" id="confirmDelete" onClick={() => deleteTrader(selectedTraderId)}>Delete</button>
+                                            <div className="modal-body text-center">
+                                                <div className="delete-icon">
+                                                    <i className="fa fa-times"></i>
+                                                </div>
+                                                <p className="mt-3 text-white">Are you sure you want to delete this trading platform?</p>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>
+                                                <button type="button" className="btn btn-danger" id="confirmDelete" onClick={() => deleteTrader(selectedTraderId)}>Delete</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
                         </div>
                     </div>
                 </div>

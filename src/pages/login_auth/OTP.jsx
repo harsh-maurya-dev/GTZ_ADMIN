@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import otp_img from "../../assets/img/login3-bg.png";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { apiCall } from "../../../api/ApiCall";
 
 function OTP() {
     const navigate = useNavigate()
@@ -45,27 +45,27 @@ function OTP() {
         const formData = { email, otp, userType }
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/verifyOTP`, formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await apiCall(
+                'put',
+                '/auth/verifyOTP',
+                formData
+            );
 
-            if (response.data.error === false) {
-                if (Number(stored_otp) === response.data.results.user?.otp) {
-                    console.log("verify sent:", response.data);
+            if (response.error === false) {
+                if (Number(stored_otp) === response.results.user?.otp) {
+                    // console.log("verify sent:", response);
                     navigate("/reset_password");
-                    toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                    toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 }
 
             } else {
-                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.error(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 // console.log(response);
 
             }
         } catch (error) {
-            console.error("otp Error:", error.response?.data || error.message);
-            toast.error("otp failed: " + (error.response?.data?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
+            console.error("otp Error:", error.response || error.message);
+            toast.error("otp failed: " + (error.response?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
         }
     };
 
@@ -75,29 +75,30 @@ function OTP() {
         try {
             const email = sessionStorage.getItem("email")
             const userType = "Admin"
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/forgotPassword`, { email, userType }, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await apiCall(
+                'put',
+                '/auth/forgotPassword',
+                {email, userType}
+            );
 
-            if (response.data.error === false) {
+            if (response.error === false) {
                 console.log("email sent:", response.data);
                 sessionStorage.removeItem("otp_expiry")
-                sessionStorage.setItem("otp", response.data.results?.otp)
-                sessionStorage.setItem("email", response.data.results.user?.email)
-                sessionStorage.setItem("otp_expiry", response.data.results.user?.expire_time)
-                console.log("resend otp:", response.data.results?.otp);
+                sessionStorage.setItem("otp", response.results?.otp)
+                sessionStorage.setItem("email", response.results.user?.email)
+                sessionStorage.setItem("otp_expiry", response.results.user?.expire_time)
+                console.log("resend otp:", response.results?.otp);
+                console.log("user details", response.results);
                 toast.success(`Resend Otp`, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 setTimeLeft(30); // Restart timer
                 setIsVisible(false);
             } else {
-                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.error(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 console.log(response);
 
             }
         } catch (error) {
-            console.error("Failed to resend:", error.response?.data || error.message);
+            console.error("Failed to resend:", error.response || error.message);
         }
     };
 

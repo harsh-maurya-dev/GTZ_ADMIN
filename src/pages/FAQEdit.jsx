@@ -1,25 +1,20 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { apiCall } from '../../api/ApiCall';
 
 const FAQEdit = () => {
     const navigate = useNavigate()
     const location = useLocation();
-    const { faqData } = location.state || {}; // Safely access passed data
-    // console.log(faqData);
-    
+    const { faqData } = location.state || {};
 
     // State to manage form fields
     const [formData, setFormData] = useState({
-        faqId:faqData?._id || "",
+        faqId: faqData?._id || "",
         title: faqData?.title || "",
         category: faqData?.category || "",
         description: faqData?.description || "",
     });
-
-    // console.log(formData);
-    
 
     // Populate form fields when faqData changes
     useEffect(() => {
@@ -46,32 +41,20 @@ const FAQEdit = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                toast.error("User authentication failed!",  { style: { backgroundColor: "#1a406a", color: "#fff" } });
-                return;
-            }
-
-            const response = await axios.put(
-                `${import.meta.env.VITE_API_URL}/content/updateFaq`,
-                formData,
-                {
-                    headers: {
-                        "Accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/json",
-                    },
-                }
+            const response = await apiCall(
+                'put',
+                '/content/updateFaq',
+                formData
             );
 
-            if (response.data?.error === false) {
+            if (response.error === false) {
                 navigate("/FAQ_management")
-                toast.success(response.data?.message,  { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
             } else {
-                toast.error(response.data?.message || "Failed to update FAQ",  { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.error(response.message || "Failed to update FAQ", { style: { backgroundColor: "#1a406a", color: "#fff" } });
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || "An error occurred!",  { style: { backgroundColor: "#1a406a", color: "#fff" } });
+            toast.error(error.response?.data?.message || "An error occurred!", { style: { backgroundColor: "#1a406a", color: "#fff" } });
         }
     };
 

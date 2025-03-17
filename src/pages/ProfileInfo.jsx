@@ -1,52 +1,48 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dummy_img from "../assets/img/user/user4.jpg";
 import { useDispatch, useSelector } from "react-redux";
-// import { profileDataApi } from "../redux/slice/profileSlice";
+import { apiCall } from "../../api/ApiCall";
+import { profileDataApi } from "../redux/profileSlice";
 
 function ProfileInfo() {
-  const [userDetails, setUserDetails] = useState({ user_name: "", email: "", phone_number: "", profile_image: "" });
+  const [userDetails, setUserDetails] = useState({
+    user_name: "",
+    email: "",
+    phone_number: "",
+    profile_image: "",
+  });
   const [selectedFile, setSelectedFile] = useState(null);
-
-  const [formData, setformData] = useState({
+  const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
   });
+
   const dispatch = useDispatch();
-  const { profileData, error, loading, messsage } = useSelector(
+  const { profileData, error, loading, message } = useSelector(
     (state) => state.profile
   );
 
+  useEffect(() => {
+    if (profileData) {
+      setUserDetails({
+        user_name: profileData.user_name || "",
+        email: profileData.email || "",
+        phone_number: profileData.phone_number || "",
+        profile_image: profileData.profile_image || dummy_img,
+      });
+    }
+  }, [profileData]);
+
+  useEffect(() => {
+    dispatch(profileDataApi());
+  }, [dispatch]);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
-    console.log("Selected File:", file);
-  };
-
-  const token = localStorage.getItem("token");
-  const fetchProfileData = async () => {
-    if (token) {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/user/getMyProfile`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              // "x-auth-user-type": "admin"
-              "x-auth-token-user": token,
-            },
-          }
-        );
-        setUserDetails(response.data.results?.user);
-        // console.log(response.data.results?.user);
-      } catch (error) {
-        toast.error(
-          "Data fetching Failed: " +
-          (error.response?.data?.message || error.message),
-          { style: { backgroundColor: "#1a406a", color: "#fff" } }
-        );
-      }
+    if (file) {
+      setSelectedFile(file);
+      console.log("Selected File:", file);
     }
   };
 
@@ -58,39 +54,42 @@ function ProfileInfo() {
     }));
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const changePassword = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/auth/changePassword`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-auth-token-user": token,
-          },
-        }
-      );
-
-      console.log("Success:", response.data.message);
-    } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error:",
-          error.response.data.message || "Something went wrong"
-        );
-      } else if (error.request) {
-        console.error("No response from server. Please try again.");
+      const response = await apiCall("put", "/auth/changePassword", formData);
+      if (response.error === false) {
+        toast.success(response.message, {
+          style: { backgroundColor: "#1a406a", color: "#fff" },
+        });
+        setFormData({ oldPassword: "", newPassword: "" }); // Reset form
       } else {
-        console.error("Request failed:", error.message);
+        toast.error(response.message, {
+          style: { backgroundColor: "#1a406a", color: "#fff" },
+        });
       }
+    } catch (error) {
+      console.error("Error:", error.response?.data?.message || "Something went wrong");
+      toast.error("Failed to change password. Please try again.", {
+        style: { backgroundColor: "#1a406a", color: "#fff" },
+      });
     }
   };
 
   const editProfile = async () => {
     if (!selectedFile) {
-      toast.error("Please select an image first!", { style: { backgroundColor: "#1a406a", color: "#fff" } });
+      toast.error("Please select an image first!", {
+        style: { backgroundColor: "#1a406a", color: "#fff" },
+      });
       return;
     }
 
@@ -98,31 +97,25 @@ function ProfileInfo() {
     formData.append("profile_image", selectedFile);
 
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/updateProfile`, formData, {
-        headers: {
-          "x-auth-token-user": token,
-        },
-      });
-
-      if (response.data.error === false) {
-        toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
-        setSelectedFile(null)
-        // window.location.reload()
+      const response = await apiCall("put", "/user/updateProfile", formData);
+      if (response.error === false) {
+        toast.success(response.message, {
+          style: { backgroundColor: "#1a406a", color: "#fff" },
+        });
+        setSelectedFile(null);
+        dispatch(profileDataApi()); // Refresh profile data
       } else {
-        console.error("Error:", response.data.message);
+        toast.error(response.message, {
+          style: { backgroundColor: "#1a406a", color: "#fff" },
+        });
       }
     } catch (error) {
-      console.error("Error updating profile:", error.response ? error.response.data : error.message);
+      console.error("Error updating profile:", error.response?.data?.message || error.message);
+      toast.error("Failed to update profile. Please try again.", {
+        style: { backgroundColor: "#1a406a", color: "#fff" },
+      });
     }
   };
-
-  // console.log(userDetails);
-  // console.log(user_name);
-
-  useEffect(() => {
-    // dispatch(profileDataApi())
-    fetchProfileData();
-  }, []);
 
   return (
     <>
@@ -256,10 +249,8 @@ function ProfileInfo() {
                 </ul>
               </div>
               <div className="comman-design-body">
-                {/* <!-- Tabs Content --> */}
                 <div className="tab-content mt-3" id="actionTabsContent">
-                  {/* <!-- Send Notification Tab --> */}
-                  {/* <!-- Add to the Competition Tab --> */}
+                  {/* Profile Information Tab */}
                   <div
                     className="tab-pane fade show active"
                     id="add-profile"
@@ -273,31 +264,50 @@ function ProfileInfo() {
                             <label htmlFor="user_name" className="form-label">
                               User Name
                             </label>
-                            <input type="text" className="form-control" name="user_name" value={userDetails?.user_name} onChange={handleChange} />
+                            <input
+                              type="text"
+                              className="form-control"
+                              name="user_name"
+                              value={userDetails?.user_name}
+                              onChange={handleChange}
+                              disabled
+                            />
                           </div>
                           <div className="form-group col-6">
                             <label htmlFor="email" className="form-label">
                               Email
                             </label>
-                            <input type="text" className="form-control" name="email" value={userDetails?.email} onChange={handleChange} />
+                            <input
+                              type="email"
+                              className="form-control"
+                              name="email"
+                              value={userDetails?.email}
+                              onChange={handleChange}
+                              disabled
+                            />
                           </div>
                           <div className="form-group col-6">
-                            <label
-                              htmlFor="mobile_number"
-                              className="form-label"
-                            >
-                              Mobile Number
+                            <label htmlFor="phone_number" className="form-label">
+                              Phone Number
                             </label>
-                            <input type="text" className="form-control" name="phone_number" value={userDetails?.phone_number} onChange={handleChange} />
+                            <input
+                              type="text"
+                              className="form-control"
+                              name="phone_number"
+                              value={userDetails?.phone_number}
+                              onChange={handleChange}
+                              disabled
+                            />
                           </div>
                         </div>
                       )}
-
-                      <div className="form-group col-6">
+                      {/* <div className="form-group col-6">
                         <button className="comman-btn">Save Changes</button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
+
+                  {/* Change Password Tab */}
                   <div
                     className="tab-pane fade"
                     id="add-competition"
@@ -307,34 +317,31 @@ function ProfileInfo() {
                     <form onSubmit={changePassword}>
                       <div className="form-design row">
                         <div className="form-group col-6">
-                          <label
-                            htmlFor="competitionName"
-                            className="form-label"
-                          >
+                          <label htmlFor="oldPassword" className="form-label">
                             Old Password
                           </label>
                           <input
-                            type="text"
+                            type="password"
                             className="form-control"
-                            id="competitionName"
+                            id="oldPassword"
                             placeholder="Enter Your Old Password"
                             value={formData.oldPassword}
                             name="oldPassword"
-                            onChange={handleChange}
+                            onChange={handlePasswordChange}
                           />
                         </div>
                         <div className="form-group col-6">
-                          <label htmlFor="customerId" className="form-label">
+                          <label htmlFor="newPassword" className="form-label">
                             New Password
                           </label>
                           <input
-                            type="text"
+                            type="password"
                             className="form-control"
-                            id="customerId"
+                            id="newPassword"
                             placeholder="Enter Your New Password"
                             name="newPassword"
                             value={formData.newPassword}
-                            onChange={handleChange}
+                            onChange={handlePasswordChange}
                           />
                         </div>
                         <button type="submit" className="comman-btn mt-4">
@@ -343,6 +350,8 @@ function ProfileInfo() {
                       </div>
                     </form>
                   </div>
+
+                  {/* Upload Image Tab */}
                   <div
                     className="tab-pane fade"
                     id="merge-customer"
@@ -351,16 +360,25 @@ function ProfileInfo() {
                   >
                     <div className="form-design">
                       <div className="form-group">
-                        <label htmlFor="" className="form-label">
+                        <label htmlFor="profile_image" className="form-label">
                           Upload Image
                         </label>
                         <div className="upload-img">
-                          <input type="file" className="form-upload" accept="image/png, image/jpeg, image/jpeg" onChange={handleFileChange} />
+                          <input
+                            type="file"
+                            className="form-upload"
+                            accept="image/png, image/jpeg, image/jpg"
+                            onChange={handleFileChange}
+                          />
                           <i className="fa solid fa-cloud-upload-alt upload-icon"></i>
                         </div>
                       </div>
                       <div className="form-group">
-                        <button className="comman-btn" type="button" onClick={editProfile}>
+                        <button
+                          className="comman-btn"
+                          type="button"
+                          onClick={editProfile}
+                        >
                           Upload
                           <i className="fa-solid fa-upload ps-2"></i>
                         </button>

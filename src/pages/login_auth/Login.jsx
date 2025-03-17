@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import login_image from "../../assets/img/login3-bg.png";
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 function Login() {
     const [loginData, setLoginData] = useState({ email: "", password: "", userType: "Admin", deviceOS: "Web" });
     const [hidePass, setHidePass] = useState(true);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setLoginData({ ...loginData, [e.target.name]: e.target.value });
@@ -24,17 +24,15 @@ function Login() {
                 },
             });
 
-            if (response.data.error === false) {
-                localStorage.setItem("token", response.data.results.token);
-                console.log("Login Success:", response.data);
-                console.log("Login Success Token:", response.data.results.token);
+            if (response.error === false) {
+                localStorage.setItem("token", response.results.token);
+                console.log("Login Success:", response);
+                console.log("Login Success Token:", response.results.token);
                 navigate("/dashboard"); // Redirect to private route
-                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
             } else {
-                // toast.error("Login failed: Invalid credentials");
-                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.error(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 console.log(response);
-
             }
         } catch (error) {
             console.error("Login Error:", error.response?.data || error.message);

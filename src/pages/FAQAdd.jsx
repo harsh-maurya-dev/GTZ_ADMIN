@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { apiCall } from '../../api/ApiCall.js';
+import { useNavigate } from "react-router-dom";
 
 const FAQAdd = () => {
+    const navigate = useNavigate()
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [language, setLanguage] = useState("en");
@@ -20,58 +22,41 @@ const FAQAdd = () => {
     
         setLoading(true);
     
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in again.", {
-                style: { backgroundColor: "#1a406a", color: "#fff" },
-            });
-            setLoading(false);
-            return;
-        }
-    
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/content/createFaq`,
+            const response = await apiCall(
+                'post',
+                '/content/createFaq',
                 {
                     title,
                     description,
                     category,
-                },
-                {
-                    headers: {
-                        "Accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/json",
-                    },
                 }
             );
     
-            if (response.data?.error === false) {
-                toast.success(response.data.message, {
+            if (response.error === false) {
+                toast.success(response.message, {
                     style: { backgroundColor: "#1a406a", color: "#fff" },
                 });
-                // ✅ Clear form fields after successful submission
+                // Clear form fields after successful submission
                 setTitle("");
                 setDescription("");
                 setLanguage("en");
                 setCategory("General");
+                navigate("/FAQ_management")
             } else {
-                toast.error(response.data?.message || "An error occurred.", {
+                toast.error(response.message || "An error occurred.", {
                     style: { backgroundColor: "#1a406a", color: "#fff" },
                 });
-                // console.log(response.data?.message);
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to add FAQ.", {
                 style: { backgroundColor: "#1a406a", color: "#fff" },
             });
-            // console.log(error);
         } finally {
-            setLoading(false); // ✅ Ensure loading state resets
+            setLoading(false); // Ensure loading state resets
         }
     };
     
-
     return (
         <>
             <div className="mt-4">

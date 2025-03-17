@@ -1,17 +1,15 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import fpass from "../../assets/img/login3-bg.png"
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import axios from 'axios'
+import { apiCall } from '../../../api/ApiCall'
 
 const ForgetPassword = () => {
-    // const [loginData, setLoginData] = useState({ email: "", password: "" });
     const navigate = useNavigate()
     const [formData, setFormData] = useState({ email: "", userType: "Admin" })
 
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, email: e.target.value }))
-        // console.log(formData.email);
 
     }
 
@@ -19,29 +17,29 @@ const ForgetPassword = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/forgotPassword`, formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await apiCall(
+                'put',
+                '/auth/forgotPassword',
+                formData
+            );
 
-            if (response.data.error === false) {
-                console.log("email sent:", response.data);
-                sessionStorage.setItem("otp", response.data.results?.otp)
-                sessionStorage.setItem("email", response.data.results.user?.email)
-                sessionStorage.setItem("otp_expiry", response.data.results.user?.expire_time)
-                console.log("otp:", response.data.results?.otp);
+            if (response.error === false) {
+                console.log("email sent:", response);
+                sessionStorage.setItem("otp", response.results?.otp)
+                sessionStorage.setItem("email", response.results.user?.email)
+                sessionStorage.setItem("otp_expiry", response.results.user?.expire_time)
+                console.log("otp:", response.results?.otp);
                 navigate("/otp"); // Redirect to private route
-                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
             } else {
                 // toast.error("Login failed: Invalid credentials");
-                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                toast.error(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 console.log(response);
 
             }
         } catch (error) {
-            console.error("Login Error:", error.response?.data || error.message);
-            toast.error("Login failed: " + (error.response?.data?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
+            console.error("Login Error:", error.response || error.message);
+            toast.error("Login failed: " + (error.response?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
         }
     };
 

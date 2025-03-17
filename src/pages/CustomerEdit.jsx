@@ -1,15 +1,15 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { apiCall } from "../../api/ApiCall.js"
 
 function CustomerEdit() {
     const { id } = useParams();
     const [masterPassword, setMasterPassword] = useState("");
     const [picAllowed, setPicAllowed] = useState(true);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
         defaultValues: {
             user_name: '',
@@ -33,24 +33,19 @@ function CustomerEdit() {
     // Fetch customer details
     useEffect(() => {
         const fetchCustomer = async () => {
-            const token = localStorage.getItem("token");
-
             try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/user/getCustomerDetails/${id}`,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "x-auth-token-user": token,
-                        },
-                    }
-                );
-                reset(response.data.results?.customer);
+                const response = await apiCall('get', `/user/getCustomerDetails/${id}`);
+                reset(response.results?.customer);
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
                 toast.error("Error fetching customer details");
                 console.error("Error fetching customer details:", error);
+                if (error.isAuthError) {
+                    // Handle authentication error, e.g., redirect to login
+                    console.error("Authentication error:", error.message);
+                    // Optionally, redirect to login page or show a message
+                }
             }
         };
 
@@ -59,7 +54,6 @@ function CustomerEdit() {
 
     // Handle form submission
     const onSubmit = async (data) => {
-        const token = localStorage.getItem("token");
         const formData = {
             "customerId": data._id,
             "first_name": data.first_name,
@@ -78,40 +72,31 @@ function CustomerEdit() {
             "email_confirmed": data.email_confirmed,
             "pic_allowed": picAllowed,
             "master_password": masterPassword
-        }
-        // console.log(data);
-
+        };
 
         try {
-            const response = await axios.put(
-                `${import.meta.env.VITE_API_URL}/user/updateCustomer`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            );
-            if (response.data.error === false) {
-                toast.success(response.data.message);
-                console.log("Updated customer details:", response.data);
-                navigate("/customers_management")
-                // window.location.reload()
-            }
-            else {
-                toast.error(response.data.message)
-                console.log(response.data.message)
+            const response = await apiCall('put', '/user/updateCustomer', formData);
+            if (response.error === false) {
+                toast.success(response.message);
+                console.log("Updated customer details:", response);
+                navigate("/customers_management");
+            } else {
+                toast.error(response.message);
+                console.log(response.message);
             }
         } catch (error) {
-            // toast.error("Error updating customer details");
             console.error("Error updating customer details:", error);
+            if (error.isAuthError) {
+                // Handle authentication error, e.g., redirect to login
+                console.error("Authentication error:", error.message);
+                // Optionally, redirect to login page or show a message
+            }
         }
     };
 
-    // if (loading) {
-    //     return <div>Loading...</div>;
-    // }
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="mt-4">
