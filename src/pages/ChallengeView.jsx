@@ -1,44 +1,37 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { apiCall } from "../../api/ApiCall.js"
 
 const ChallengeView = () => {
-    const { id } = useParams()
+    const { id } = useParams();
     const [challengesDetails, setChallengesDetails] = useState({});
 
     const fetchChallengesDetails = async () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            return;
-        }
         try {
-            const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/trading/getChallengeDetails/${id}`,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            );
-            setChallengesDetails(response.data.results?.challenge || {});
-            console.log(response.data.results?.challenge);
+            const response = await apiCall('get', `/trading/getChallengeDetails/${id}`);
 
+            if (response.error === false) {
+                setChallengesDetails(response.results?.challenge || {});
+                // console.log(response.results?.challenge);
+            } else {
+                toast.error(response.message || "Failed to fetch challenge details.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
+            }
         } catch (error) {
             console.error("Error fetching challenges:", error);
+            toast.error(error.message || "An error occurred while fetching challenge details.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
         }
     };
 
-    // console.log(challengesDetails);
     const phase = challengesDetails.phases?.[0] || {};
-    // console.log(phase);
-    
 
     useEffect(() => {
         fetchChallengesDetails();
-    }, []);
+    }, [id]);
 
     return (
         <>

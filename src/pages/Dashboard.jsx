@@ -2,12 +2,27 @@ import { useEffect, useState } from 'react'
 import user4 from "../assets/img/user/user4.jpg"
 import welcome from "../assets/img/bg-img/welcome-bg.webp"
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import axios from 'axios'
 import { toast } from 'react-toastify'
+import { apiCall } from '../../api/ApiCall'
+import { profileDataApi } from '../redux/profileSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Dashboard = () => {
     const [customerDetails, setCustomerDetails] = useState([])
     const [loading, setLoading] = useState(false)
+    const [userDetails, setUserDetails] = useState({ user_name: "" })
+    const dispatch = useDispatch();
+    const { profileData, error, message } = useSelector(
+        (state) => state.profile
+    );
+
+    useEffect(() => {
+        if (profileData) {
+            setUserDetails({
+                user_name: profileData.user_name || "",
+            });
+        }
+    }, [profileData]);
 
     const data = [
         { month: 'Aug', value1: 59, value2: 19 },
@@ -93,33 +108,17 @@ const Dashboard = () => {
 
     const fetchRecentCustomer = async () => {
         setLoading(true)
-        const token = localStorage.getItem("token")
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } })
-            setLoading(false)
-            return
-        }
-
         try {
-            const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/user/getCustomerList`,
-                {},
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                }
-            )
-
-            if (response.data.error === false) {
-                setCustomerDetails(response.data.results.customers)
+            const response = await apiCall('patch', '/user/getCustomerList', {});
+            if (response.error === false) {
+                setCustomerDetails(response.results.customers)
                 // setTotalPages(response.data.results.totalPages || 1)
                 // setTotalCustomers(response.data.results.totalCustomers || 0)
             }
         } catch (error) {
             toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+            console.log(error);
+
         } finally {
             setLoading(false)
         }
@@ -127,6 +126,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchRecentCustomer()
+        dispatch(profileDataApi())
     }, [])
 
     return (
@@ -138,7 +138,7 @@ const Dashboard = () => {
                         <div className="rounded-4 bg-white welcome-card-wrapper">
                             <div className="d-flex justify-content-between welcome-card">
                                 <div className="welcome-text p-4">
-                                    <h2 className="">Welcome Mike <br />Nielsen</h2>
+                                    <h2 className="">Welcome {userDetails.user_name}</h2>
                                     <p className="">Check all the statastics</p>
                                     {/* <!-- <div className="mt-2">
                                                 <button className="comman-btn">View All</button>
@@ -319,9 +319,13 @@ const Dashboard = () => {
                                     <tbody>
 
                                         {
-                                            loading ? (<p>Loading Data...</p>) :
+                                            loading ? (
+                                                <tr>
+                                                    <td colSpan="3" className="text-center">Loading Data...</td>
+                                                </tr>
+                                            ) :
                                                 (
-                                                    customerDetails.slice(0,5).map((customer, index) => {
+                                                    customerDetails.slice(0, 5).map((customer, index) => {
                                                         return (
                                                             <tr key={index}>
                                                                 <td>
@@ -332,9 +336,9 @@ const Dashboard = () => {
                                                                         <span>{customer?.name}</span>
                                                                     </div>
                                                                 </td>
-                                                                <td>${ customer?.income || "200"}</td>
+                                                                <td>${customer?.income || "200"}</td>
                                                                 <td>
-                                                                    <div className={customer?.status ? "badge bg-light-success text-success" : " text-danger bg-light-danger"}>{ customer?.status ? "Active": "InActive"}</div>
+                                                                    <div className={customer?.status ? "badge bg-light-success text-success" : " text-danger bg-light-danger"}>{customer?.status ? "Active" : "InActive"}</div>
                                                                 </td>
                                                             </tr>
                                                         )

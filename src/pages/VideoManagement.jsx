@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import ytImg from "../assets/img/ytlogo.webp";
+import { apiCall } from "../../api/ApiCall";
+import bgImg from "../assets/img/bg-img/ChatBc.webp"
 
 const VideoManagement = () => {
     const [videos, setVideos] = useState([]);
@@ -12,40 +13,15 @@ const VideoManagement = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [isOpenPopup, setIsOpenPopup] = useState(false);
-    const [selectedVideoId, setSelectedVideoId] = useState(null);
-    const token = localStorage.getItem("token");
-    console.log(token);
-    
+    const [selectedVideoId, setSelectedVideoId] = useState(null);    
 
     const fetchVideos = async (page) => {
         setLoading(true);
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            setLoading(false);
-            return;
-        }
-
         try {
-            const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/content/getVideoTutorialList`,
-                {},
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    // params: {
-                    //     page,
-                    //     pageSize,
-                    // },
-                    
-                },
-            );
-
-            if (response.data.error === false) {
-                setVideos(response.data.results?.videoTutorials);
-                setTotalPages(response.data.results?.totalPages || 1);
+            const response = await apiCall('patch', '/content/getVideoTutorialList', {});
+            if (response.error === false) {
+                setVideos(response.results?.videoTutorials);
+                setTotalPages(response.results?.totalPages || 1);
             }
         } catch (error) {
             toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
@@ -54,25 +30,13 @@ const VideoManagement = () => {
         }
     };
 
-    const deleteVideo = async () => {
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            return;
-        }
+    const deleteVideo = async (id) => {        
+        const button = document.getElementById("confirmDelete");
+        button.style.cursor = "not-allowed";
         try {
-            const response = await axios.delete(
-                `${import.meta.env.VITE_API_URL}/content/deleteVideoTutorial/${selectedVideoId}`,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                },
-            );
-
-            if (response.data.error === false) {
-                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+            const response = await apiCall('delete', `/content/deleteVideoTutorial/${id}`);
+            if (response.error === false) {
+                toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 setIsOpenPopup(false);
                 fetchVideos(currentPage);
             }
@@ -109,7 +73,7 @@ const VideoManagement = () => {
                         </div>
                         <div className="breadcrumb-img-wrapper">
                             <div className="breadcrumb-img">
-                                <img src="assets/img/bg-img/ChatBc.webp" alt="" className="w-100 h-100" />
+                                <img src={bgImg} alt="" className="w-100 h-100" />
                             </div>
                         </div>
                     </div>
@@ -117,7 +81,7 @@ const VideoManagement = () => {
             </div>
             <div className="comman-design2 mt-4">
                 <div className="comman-design-header">
-                    <h2 className="comman-header">Video Management</h2>
+                    <h2 className="comman-heading">Video Management</h2>
                     <div className="">
                         <div className="dropdown">
                             <button className="comman-btn bg-dark-main rounded-3 px-3" type="button"
@@ -268,7 +232,7 @@ const VideoManagement = () => {
                                     </div>
                                     <div className="modal-footer">
                                         <button type="button" className="btn btn-light" onClick={() => setIsOpenPopup(false)}>Cancel</button>
-                                        <button type="button" className="btn btn-danger" id="confirmDelete" onClick={deleteVideo}>Delete</button>
+                                        <button type="button" className="btn btn-danger" id="confirmDelete" onClick={()=>deleteVideo(selectedVideoId)}>Delete</button>
                                     </div>
                                 </div>
                             </div>

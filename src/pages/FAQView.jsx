@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
-
+import { apiCall } from "../../api/ApiCall.js"
 const FAQView = () => {
     const { id } = useParams(); // Extract the FAQ ID from the URL
     const [faq, setFaq] = useState({});
@@ -11,30 +10,16 @@ const FAQView = () => {
 
     useEffect(() => {
         const fetchFAQ = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                toast.error("No token found. Please log in again.", {
-                    style: { backgroundColor: "#1a406a", color: "#fff" },
-                });
-                setLoading(false);
-                return;
-            }
-
             try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/content/getFaqDetails/${id}`,
-                    {
-                        headers: {
-                            "accept": "application/json",
-                            "x-auth-token-user": token,
-                        },
-                    }
+                const response = await apiCall(
+                    'get',
+                    `/content/getFaqDetails/${id}`
                 );
 
-                if (response.data.error === false) {
-                    setFaq(response.data.results?.faqId);
+                if (response.error === false) {
+                    setFaq(response.results?.faqId);
                 } else {
-                    toast.error(response.data.message, {
+                    toast.error(response.message, {
                         style: { backgroundColor: "#1a406a", color: "#fff" },
                     });
                 }
@@ -53,10 +38,6 @@ const FAQView = () => {
     if (loading) {
         return <div>Loading...</div>;
     }
-
-    // if (!faq) {
-    //     return <div>No FAQ found.</div>;
-    // }
 
     return (
         <>

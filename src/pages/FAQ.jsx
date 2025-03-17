@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect'
-import axios from 'axios'
+import bgImg from "../assets/img/bg-img/ChatBc.webp"
 import { toast } from 'react-toastify'
+import { apiCall } from "../../api/ApiCall.js"
 
 function FAQ() {
     const [faqs, setFaqs] = useState([])
@@ -12,38 +13,19 @@ function FAQ() {
     const [pageSize, setPageSize] = useState(10)
     const [isOpenPopup, setIsOpenPopup] = useState(false)
     const [selectedCustomerId, setSelectedCustomerId] = useState(null)
-    const token = localStorage.getItem("token")
 
     const fetchFAQs = async (page) => {
         setLoading(true)
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } })
-            setLoading(false)
-            return
-        }
-
         try {
-            // const params = {
-            //     page,
-            //     pageSize,
-            // };
-
-            const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/content/getFaqList`,
-                {},
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    // params,
-                },
+            const response = await apiCall(
+                'patch',
+                '/content/getFaqList',
+                {}
             )
 
-            if (response.data.error === false) {
-                setFaqs(response.data.results.faqs)
-                setTotalPages(response.data.results.totalPages || 1)
+            if (response.error === false) {
+                setFaqs(response.results.faqs)
+                setTotalPages(response.results.totalPages || 1)
             }
         } catch (error) {
             toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
@@ -53,29 +35,18 @@ function FAQ() {
     }
 
     const deleteFaq = async () => {
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } })
-            return
-        }
         try {
-            const response = await axios.delete(
-                `${import.meta.env.VITE_API_URL}/content/deleteFaq/${selectedCustomerId}`,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                },
+            const response = await apiCall(
+                'delete',
+                `/content/deleteFaq/${selectedCustomerId}`
             )
 
-            if (response.data.error === false) {
-                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+            if (response.error === false) {
+                toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
                 setIsOpenPopup(false)
                 fetchFAQs()
             }
         } catch (error) {
-            // toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
             toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
         }
     }
@@ -108,7 +79,7 @@ function FAQ() {
                         </div>
                         <div className="breadcrumb-img-wrapper">
                             <div className="breadcrumb-img">
-                                <img src="assets/img/bg-img/ChatBc.webp" alt="" className="w-100 h-100" />
+                                <img src={bgImg} alt="" className="w-100 h-100" />
                             </div>
                         </div>
                     </div>

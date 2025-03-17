@@ -1,23 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { apiCall } from "../../api/ApiCall";
 
 export const profileDataApi = createAsyncThunk(
     "admin/profileData",
     async (formData) => {
-        const token = localStorage.getItem("token")
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/getMyProfile`,
-                {
-                    headers:
-                    {
-                        "Content-Type": "application/json",
-                        "x-auth-token-user": token
-                    }
-                })
-            const data = response.data
+            const response = await apiCall('get', '/user/getMyProfile');
+            // const data = response.data
             // console.log(data);
+            // console.log(response);
             
-            return data
+            return response
         } catch (error) {
             return error.response?.data?.message;
         }
@@ -29,9 +22,9 @@ const profileSlice = createSlice({
         profileData: null,
         loading: false,
         error: null,
-        messsage:""
-
+        messsage: ""
     },
+
     extraReducers: (builder) => {
         builder
             .addCase(profileDataApi.pending, (state) => {

@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import chatbc from "../assets/img/bg-img/ChatBc.webp"
+import { useEffect, useState } from 'react';
+import chatbc from "../assets/img/bg-img/ChatBc.webp";
 import { toast } from 'react-toastify';
+import { apiCall } from "../../api/ApiCall.js"
 
 const PendingUpgrades = () => {
     const [isOpenReason, setIsOpenReason] = useState(false);
@@ -9,79 +9,59 @@ const PendingUpgrades = () => {
     const [reason, setReason] = useState('');
     const [selectedId, setSelectedId] = useState('');
     const [loading, setLoading] = useState(true);
-    const token = localStorage.getItem("token");
 
     useEffect(() => {
         const fetchPendingUpgrades = async () => {
-            if (!token) {
-                toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-                setLoading(false);
-                return;
-            }
-
             try {
-                const params = {
-                    // page,
-                    // pageSize,
-                    // year, // Only add if selected
-                };
+                const response = await apiCall('patch', '/user/getPendingUpgrades');
 
-                const response = await axios.patch(
-                    `${import.meta.env.VITE_API_URL}/user/getPendingUpgrades`,
-                    params,
-                    {
-                        headers: {
-                            "accept": "application/json",
-                            "x-auth-token-user": token,
-                            "Content-Type": "application/x-www-form-urlencoded",
-                        },
-                    }
-                );
-
-                if (response.data.error === false) {
-                    setPendingCustomer(response.data.results?.customers || []);
-                    // setTotalPages(response.data.results.totalPages || 1)
-                    // setTotalCustomers(response.data.results.totalCustomers || 0)
-                    console.log(response.data.results?.customers);
+                if (response.error === false) {
+                    setPendingCustomer(response.results?.customers || []);
+                    console.log(response.results?.customers);
+                } else {
+                    toast.error(response.message || "Failed to fetch pending upgrades.", {
+                        style: { backgroundColor: "#1a406a", color: "#fff" },
+                    });
                 }
-                setLoading(false);
             } catch (error) {
-                console.log(error);
+                toast.error(error.message || "An error occurred while fetching pending upgrades.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
+                console.error("Error fetching pending upgrades:", error);
+            } finally {
                 setLoading(false);
-                // toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
             }
         };
 
         fetchPendingUpgrades();
-    }, [token]);
+    }, []);
 
-    const rejectRequest = async(id) => {
-        // Implement reject functionality
-        const status = "Rejected"
+    const rejectRequest = async (id) => {
+        const status = "Rejected";
         const formData = {
-            customerId : id,
-            status:status,
-            reason:reason
-        }
+            customerId: id,
+            status: status,
+            reason: reason
+        };
+
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/acceptRejectCustomer`, formData,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    }
-                }
-            )
-            if (response.data.error === false) {
-                console.log(response.data.message);
-                toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+            const response = await apiCall('put', '/user/acceptRejectCustomer', formData);
+
+            if (response.error === false) {
+                toast.success(response.message || "Request rejected successfully.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
                 setIsOpenReason(false);
             } else {
-                console.log(response.data.message);
+                toast.error(response.message || "Failed to reject request.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
             }
         } catch (error) {
-            console.log(error);
+            toast.error(error.message || "An error occurred while rejecting the request.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
+            console.error("Error rejecting request:", error);
         }
     };
 

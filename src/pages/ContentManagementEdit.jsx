@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
-import axios from "axios";
 import "quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
+import { apiCall } from "../../api/ApiCall";
 
 const ContentManagementEdit = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { contentData } = location.state || {}; // Safely access passed data
+    const { contentData } = location.state || {};
 
     // State to manage form fields
     const [formData, setFormData] = useState({
@@ -18,21 +18,6 @@ const ContentManagementEdit = () => {
         status: contentData?.status || "",
         content: contentData?.content || "",
     });
-
-    // console.log(formData);
-
-
-    // Populate form fields when contentData changes
-    // useEffect(() => {
-    //     if (contentData) {
-    //         setFormData((prevData) => ({
-    //             ...prevData,
-    //             type_key: contentData.type_key || "",
-    //             status: contentData.status || "",
-    //             content: contentData.content || "",
-    //         }));
-    //     }
-    // }, [contentData]);
 
     // Handle input changes
     const handleChange = (name, value) => {
@@ -54,42 +39,21 @@ const ContentManagementEdit = () => {
             return;
         }
 
-        console.log(formData);
-
-
         try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                toast.error("User authentication failed!", {
-                    style: { backgroundColor: "#1a406a", color: "#fff" },
-                });
-                return;
-            }
+            const response = await apiCall('put', '/content/updateContent', formData);
 
-            const response = await axios.put(
-                `${import.meta.env.VITE_API_URL}/content/updateContent`,
-                formData,
-                {
-                    headers: {
-                        "Accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.data?.error === false) {
+            if (response.error === false) {
                 navigate("/content_management");
-                toast.success(response.data?.message, {
+                toast.success(response.message, {
                     style: { backgroundColor: "#1a406a", color: "#fff" },
                 });
             } else {
-                toast.error(response.data?.message || "Failed to update content", {
+                toast.error(response.message || "Failed to update content", {
                     style: { backgroundColor: "#1a406a", color: "#fff" },
                 });
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || "An error occurred!", {
+            toast.error(error.message || "An error occurred!", {
                 style: { backgroundColor: "#1a406a", color: "#fff" },
             });
         }

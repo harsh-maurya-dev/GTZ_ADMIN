@@ -1,100 +1,86 @@
-import React, { useEffect, useState } from 'react'
-import customer_image from "../assets/img/bg-img/ChatBc.webp"
-import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect'
-import { Link, useSearchParams } from 'react-router-dom'
-import customerImg from "../assets/img/user/user4.jpg"
-import axios from 'axios'
-import { toast } from 'react-toastify'
+import { useEffect, useState } from 'react';
+import customer_image from "../assets/img/bg-img/ChatBc.webp";
+import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect';
+import { Link, useSearchParams } from 'react-router-dom';
+import customerImg from "../assets/img/user/user4.jpg";
+import { toast } from 'react-toastify';
+import { apiCall } from "../../api/ApiCall"
 
 const Customer = () => {
-    const [customerDetails, setCustomerDetails] = useState([])
-    const [isOpenPopup, setIsOpenPopup] = useState(false)
-    const [selectedCustomerId, setSelectedCustomerId] = useState(null)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
-    const [loading, setLoading] = useState(false)
-    const [totalCustomers, setTotalCustomers] = useState(0)
-    const [searchParams, setSearchParam] = useSearchParams()
-    // const pageSize = 10
-    const [pageSize, setPageSize] = useState(10)
-    const [year, setYear] = useState(2025)
+    const [customerDetails, setCustomerDetails] = useState([]);
+    const [isOpenPopup, setIsOpenPopup] = useState(false);
+    const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [totalCustomers, setTotalCustomers] = useState(0);
+    const [searchParams, setSearchParam] = useSearchParams();
+    const [pageSize, setPageSize] = useState(5);
+    const [year, setYear] = useState(2025);
 
     const fetchCustomer = async (page) => {
-        setLoading(true)
-        const token = localStorage.getItem("token")
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } })
-            setLoading(false)
-            return
-        }
+        setLoading(true);
 
         try {
             const params = {
                 page,
                 pageSize,
-                year, // Only add if selected
+                year,
             };
 
+            const response = await apiCall('patch', '/user/getCustomerList', params);
 
-            const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/user/getCustomerList`,
-                params,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                }
-            )
-
-            if (response.data.error === false) {
-                setCustomerDetails(response.data.results.customers)
-                setTotalPages(response.data.results.totalPages || 1)
-                setTotalCustomers(response.data.results.totalCustomers || 0)
+            if (response.error === false) {
+                setCustomerDetails(response.results.customers);
+                setTotalPages(response.results.totalPages || 1);
+                setTotalCustomers(response.results.totalCustomers || 0);
+            } else {
+                toast.error(response.message || "Failed to fetch customer list.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
             }
         } catch (error) {
-            toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } })
+            toast.error(error.message || "An error occurred while fetching customer list.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     const deleteCustomer = async (id) => {
-        const button = document.getElementById("confirmDelete")
-        button.style.cursor = "not-allowed"
+        const button = document.getElementById("confirmDelete");
+        button.style.cursor = "not-allowed";
 
-        const token = localStorage.getItem("token")
         try {
-            const response = await axios.delete(
-                `${import.meta.env.VITE_API_URL}/user/deleteCustomer/${id}`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            )
-            if (response.data.error === false) {
-                toast.success(response.data.message)
-                setIsOpenPopup(false)
+            const response = await apiCall('delete', `/user/deleteCustomer/${id}`);
+
+            if (response.error === false) {
+                toast.success(response.message || "Customer deleted successfully.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
+                setIsOpenPopup(false);
                 // Refresh current page after deletion
-                fetchCustomer(currentPage)
+                fetchCustomer(currentPage);
             } else {
-                toast.error(response.data.message)
+                toast.error(response.message || "Failed to delete customer.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
             }
         } catch (error) {
-            toast.error(error.message)
+            toast.error(error.message || "An error occurred while deleting the customer.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
         } finally {
-            button.style.cursor = "pointer"
+            button.style.cursor = "pointer";
         }
-    }
+    };
 
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
-            setCurrentPage(newPage)
+            setCurrentPage(newPage);
         }
-    }
+    };
 
     // Add currentPage to dependency array to fetch data when page changes
     useEffect(() => {
@@ -106,8 +92,8 @@ const Customer = () => {
     }, [currentPage, pageSize, setSearchParam]);
 
     function formatDate(createdAt) {
-        const date = createdAt.split("T")[0]
-        return date
+        const date = createdAt.split("T")[0];
+        return date;
     }
 
     return (

@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import form_img from "../../assets/img/login3-bg.png"
 import { toast } from 'react-toastify'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { apiCall } from '../../../api/ApiCall'
 
 function ResetPassword() {
     const navigate = useNavigate()
@@ -24,23 +24,23 @@ function ResetPassword() {
             const email = sessionStorage.getItem("email")
             const data = {"email":email, "password":formData.password, userType:"Admin"}
             try {
-                const response = await axios.put(`${import.meta.env.VITE_API_URL}/auth/updatePassword`, data, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (response.data.error === false) {
+                const response = await apiCall(
+                    'put',
+                    '/auth/updatePassword',
+                    data
+                );
+                if (response.error === false) {
                     navigate("/login"); // Redirect to private route
-                    toast.success(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                    toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 } else {
                     // toast.error("Login failed: Invalid credentials");
-                    toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                    toast.error(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                     console.log(response);
 
                 }
             } catch (error) {
-                console.error("Login Error:", error.response?.data || error.message);
-                toast.error("Login failed: " + (error.response?.data?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
+                console.error("Login Error:", error.response || error.message);
+                toast.error("Login failed: " + (error.response?.message || error.message), { style: { backgroundColor: "#1a406a", color: "#fff" } });
             }
         }
         else {

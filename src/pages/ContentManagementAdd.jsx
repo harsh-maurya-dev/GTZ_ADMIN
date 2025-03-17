@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ReactQuill from "react-quill";
-import axios from "axios";
 import "quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
+import { apiCall } from "../../api/ApiCall.js";
 
 const ContentManagementAdd = () => {
     const [formData, setFormData] = useState({
@@ -62,33 +62,12 @@ const ContentManagementAdd = () => {
         }
 
         setLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in again.", {
-                style: { backgroundColor: "#1a406a", color: "#fff" },
-            });
-            setLoading(false);
-            return;
-        }
-
-        // console.log(formData);
-        
 
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/content/createContent`,
-                formData,
-                {
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+            const response = await apiCall('post', '/content/createContent', formData);
 
-            if (response.data.error === false) {
-                toast.success(response.data?.message);
+            if (response.error === false) {
+                toast.success(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
                 // Reset form after successful submission
                 setFormData({
                     type_key: "",
@@ -96,12 +75,11 @@ const ContentManagementAdd = () => {
                     content: "",
                     heading: "",
                 });
+            } else {
+                toast.error(response.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
             }
-            else{
-                toast.error(response.data.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
-                }
         } catch (error) {
-            toast.error(error.response?.data?.message || "", {
+            toast.error(error.message || "An error occurred. Please try again.", {
                 style: { backgroundColor: "#1a406a", color: "#fff" },
             });
         } finally {

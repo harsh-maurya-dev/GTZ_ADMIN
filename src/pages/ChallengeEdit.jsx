@@ -1,10 +1,9 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { apiCall } from "../../api/ApiCall.js"
 
 function ChallengeEdit() {
-    const token = localStorage.getItem("token");
     const { id } = useParams();
     const [formData, setFormData] = useState({
         name: "",
@@ -42,26 +41,24 @@ function ChallengeEdit() {
     // Fetch challenge details
     useEffect(() => {
         const fetchChallenge = async () => {
-
             try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/trading/getChallengeDetails/${id}`,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "x-auth-token-user": token,
-                        },
-                    }
-                );
-                if (response.data.results?.challenge) {
+                const response = await apiCall('get', `/trading/getChallengeDetails/${id}`);
+
+                if (response.error === false && response.results?.challenge) {
                     setFormData({
-                        name: response.data.results.challenge.phases[0].name,
-                        price: response.data.results.challenge.phases[0].price,
-                        featureDetails: response.data.results.challenge.phases[0].features
+                        name: response.results.challenge.phases[0].name,
+                        price: response.results.challenge.phases[0].price,
+                        featureDetails: response.results.challenge.phases[0].features
+                    });
+                } else {
+                    toast.error(response.message || "Failed to fetch challenge details.", {
+                        style: { backgroundColor: "#1a406a", color: "#fff" },
                     });
                 }
             } catch (error) {
-                toast.error("Error fetching challenge details");
+                toast.error(error.message || "An error occurred while fetching challenge details.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
                 console.error("Error fetching challenge details:", error);
             }
         };
@@ -74,23 +71,21 @@ function ChallengeEdit() {
         event.preventDefault();
 
         try {
-            const response = await axios.put(
-                `${import.meta.env.VITE_API_URL}/trading/updateChallenge/${id}`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            );
-            if (response.data.success) {
-                toast.success("Challenge updated successfully");
+            const response = await apiCall('put', `/trading/updateChallenge/${id}`, formData);
+
+            if (response.error === false) {
+                toast.success(response.message || "Challenge updated successfully.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
             } else {
-                toast.error("Failed to update challenge");
+                toast.error(response.message || "Failed to update challenge.", {
+                    style: { backgroundColor: "#1a406a", color: "#fff" },
+                });
             }
         } catch (error) {
-            toast.error("Error updating challenge");
+            toast.error(error.message || "An error occurred while updating the challenge.", {
+                style: { backgroundColor: "#1a406a", color: "#fff" },
+            });
             console.error("Error updating challenge:", error);
         }
     };

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import ShimmerEffect from '../components/skeleton_loading/ShimmerEffect';
 import contentImage from "../assets/img/bg-img/ChatBc.webp";
+import { apiCall } from '../../api/ApiCall';
 
 const ContentManagement = () => {
     const [contentList, setContentList] = useState([]);
@@ -19,12 +19,6 @@ const ContentManagement = () => {
 
     const fetchContent = async (page) => {
         setLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in again.", { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            setLoading(false);
-            return;
-        }
 
         try {
             const params = {
@@ -33,26 +27,16 @@ const ContentManagement = () => {
                 status: statusFilter === 'all' ? undefined : statusFilter,
             };
 
-            const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/content/getContentList`,
-                {
-                    params,
-                    headers: {
-                        "accept": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            );
+            const response = await apiCall('get', '/content/getContentList', { params });
 
-            if (response.data.error === false) {
-                setContentList(response.data.results.contents);
-                setTotalPages(response.data.results.totalPages || 1);
-                setTotalContents(response.data.results.totalContents || 0);
+            if (response.error === false) {
+                setContentList(response.results.contents);
+                setTotalPages(response.results.totalPages || 1);
+                setTotalContents(response.results.totalContents || 0);
             }
         } catch (error) {
-            console.log(error);
+            console.error("API call failed:", error.message);
             toast.error(error.message, { style: { backgroundColor: "#1a406a", color: "#fff" } });
-            
         } finally {
             setLoading(false);
         }
@@ -62,23 +46,15 @@ const ContentManagement = () => {
         const button = document.getElementById("confirmDelete");
         button.style.cursor = "not-allowed";
 
-        const token = localStorage.getItem("token");
         try {
-            const response = await axios.delete(
-                `${import.meta.env.VITE_API_URL}/content/deleteContent/${id}`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-auth-token-user": token,
-                    },
-                }
-            );
-            if (response.data.error === false) {
-                toast.success(response.data.message);
+            const response = await apiCall('delete', `/content/deleteContent/${id}`);
+
+            if (response.error === false) {
+                toast.success(response.message);
                 setIsOpenPopup(false);
                 fetchContent(currentPage);
             } else {
-                toast.error(response.data.message);
+                toast.error(response.message);
             }
         } catch (error) {
             toast.error(error.message);
@@ -105,7 +81,6 @@ const ContentManagement = () => {
         const date = createdAt.split("T")[0];
         return date;
     }
-    
 
     return (
         <>
@@ -160,13 +135,12 @@ const ContentManagement = () => {
                                                 <td>{formatDate(content?.updatedAt)}</td>
                                                 <td>
                                                     <div className="d-flex gap-3 justify-content-center">
-                                                        <Link to={`/content_management_view/${content?._id}`
-                                                    } className="table-icon bg-success"
-                                                    state={{ contentData: content }} >
+                                                        <Link to={`/content_management_view/${content?._id}`} className="table-icon bg-success"
+                                                            state={{ contentData: content }}>
                                                             <i className="fa-solid fa-desktop"></i>
                                                         </Link>
                                                         <Link to={`/content_management_edit/${content?._id}`} className="table-icon bg-main"
-                                                        state={{ contentData: content }}>
+                                                            state={{ contentData: content }}>
                                                             <i className="fa-solid fa-pencil"></i>
                                                         </Link>
                                                         <div className="table-icon bg-danger" data-bs-toggle="modal" data-bs-target="#deleteContentModal"
