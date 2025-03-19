@@ -102,9 +102,6 @@ const VideoManagementAdd = lazy(() => import('./pages/VideoManagementAdd'));
 const VideoManagementEdit = lazy(() => import('./pages/VideoManagementEdit'));
 const VideoManagementView = lazy(() => import('./pages/VideoManagementView'));
 
-// Lazy loading Image Management
-const ImageManagement = lazy(() => import('./pages/ImageManagement'));
-
 // Lazy loading User Management
 const UserManagement = lazy(() => import('./pages/UserManagement'));
 const UserManagementAdd = lazy(() => import('./pages/UserManagementAdd'));
@@ -250,9 +247,6 @@ function App() {
                 <Route path="/video_management_add" element={<SuspenseRoute element={<VideoManagementAdd />} />} />
                 <Route path="/video_management_edit/:id" element={<SuspenseRoute element={<VideoManagementEdit />} />} />
                 <Route path="/video_management_view/:id" element={<SuspenseRoute element={<VideoManagementView />} />} />
-
-                {/* Image Management */}
-                <Route path="/image_management" element={<SuspenseRoute element={<ImageManagement />} />} />
 
                 {/* User Management */}
                 <Route path="/users_management" element={<SuspenseRoute element={<UserManagement />} />} />

@@ -28,7 +28,6 @@ const Sidebar = () => {
         { path: "/FAQ_management", icon: "fa-solid fa-file", name: "FAQ Management" },
         { path: "/download_management", icon: "fa-solid fa-download", name: "Download Management" },
         { path: "/video_management", icon: "fa-solid fa-video-camera", name: "Video Tutorial Magnet" },
-        { path: "/image_management", icon: "fa-solid fa-image", name: "Image Management" },
         { path: "/users_management", icon: "fa-solid fa-lock", name: "Users Management" },
         { path: "/announcement", icon: "fa-solid fa-volume-down", name: "Announcement" },
         { path: "/discount_codes_management", icon: "fa-solid fa-tags", name: "Discount Codes Magnet" },
